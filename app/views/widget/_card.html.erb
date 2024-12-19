@@ -1,0 +1,12 @@
+<div class="col-12 col-md-6 mt-3">
+  <div class="custom-card d-flex align-items-center p-2">
+    <img src="<%= person["picture"] %>" alt="Profile picture" class="profile-picture">
+    <div class="card-text text-custom-dark ms-3">
+      <strong class="mb-1"><%= sanitize_name("#{person["first_name"]} #{person["last_name"]} / #{person["nickname"]}") %></strong>
+      <% if (first_role = get_linked_role_for_person(person, @linked_roles)) %>
+        <span><%= first_role["role_type"] %></span>
+      <% end %>
+      <%= mail_to person["email"], class: "mail-link" %>
+    </div>
+  </div>
+</div>

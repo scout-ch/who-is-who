@@ -1,0 +1,3 @@
+# .stylelintignore
+**/bootstrap/**/*.scss
+**/bootstrap/**/*.css

@@ -1,0 +1,43 @@
+<div class="container-fluid mt-5">
+  <div class="grid-widget">
+    <%= render "navbar" %>
+
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="title mt-3">
+        <h2><%= extract_translation(@group["description"], @language) %></h2>
+      </div>
+    </div>
+
+    <% if @error_message.present? %>
+      <div class="alert alert-danger">
+        <%= @error_message %>
+      </div>
+    <% end %>
+
+    <% if @group&.dig('id') == @initial_group_id || @people.empty? %>
+      <div class="row">
+        <% @children_groups.each do |child| %>
+          <div class="col-12 col-md-6 mt-3">
+            <div class="d-flex align-items-center w-100">
+              <div class="card-text text-custom-dark w-100">
+                <a href="/?group_id=<%= child["id"] %>&lang=<%= @language %>" class="p-3 rounded-3 navigation-button w-100" data-turbo="false">
+                  <%= extract_translation(child["name"], @language) %>
+                </a>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <% if @people.none? %>
+        <p>No people found.</p>
+      <% else %>
+        <div class="row">
+          <% @people.each do |person| %>
+            <%= render "card", person: person %>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

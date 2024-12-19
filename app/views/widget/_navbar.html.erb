@@ -1,0 +1,55 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-violet rounded-3 navbar-dark">
+  <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav me-auto">
+
+      <% if should_render_initial_group?(@group, @initial_group_id, @parent_group) %>
+        <li class="nav-item">
+          <%= link_to extract_translation(@initial_group_name, @language),
+                      "/?group_id=#{@initial_group_id}&lang=#{@language}",
+                      class: "nav-link ps-2",
+                      data: { turbo: false } %>
+        <li class="nav-item d-none d-lg-inline"><span class="nav-link">></span></li>
+        </li>
+      <% end %>
+
+      <% if should_render_parent_group?(@parent_group) %>
+        <li class="nav-item">
+          <%= link_to extract_translation(@parent_group["name"], @language),
+                      "/?group_id=#{@parent_group["id"]}&lang=#{@language}",
+                      class: "nav-link ps-2",
+                      data: { turbo: false } %>
+        <li class="nav-item d-none d-lg-inline"><span class="nav-link">></span></li>
+        </li>
+      <% end %>
+
+      <% if should_render_children_groups?(@children_groups) %>
+        <li class="nav-item dropdown">
+          <%= link_to extract_translation(@group["name"], @language), "#",
+                      class: "nav-link dropdown-toggle ps-2 active",
+                      id: "navbarDropdown",
+                      role: "button",
+                      data: { bs_toggle: "dropdown",
+                              turbo: false },
+                      aria: { expanded: false } %>
+          <ul class="dropdown-menu m-2" aria-labelledby="navbarDropdown">
+            <% @children_groups.each do |child| %>
+              <li>
+                <%= link_to extract_translation(child["name"], @language),
+                            root_url(group_id: child["id"], lang: @language),
+                            class: "dropdown-item",
+                            data: { turbo: false } %>
+              </li>
+            <% end %>
+          </ul>
+        </li>
+      <% else %>
+        <li class="nav-item active">
+          <span class="nav-link ps-2"><%= extract_translation(@group["name"], @language) %></span>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</nav>

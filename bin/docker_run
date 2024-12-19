@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_ROOT=$(dirname "$0")/..
+TEMP_HASH_FILE="$APP_ROOT/.docker_hash"
+NEW_HASH_FILE="$APP_ROOT/.docker_hash_new"
+SETUP_MARKER_FILE="$APP_ROOT/.setup_complete"
+
+# Generate current hash of Dockerfile and Compose file
+sha256sum "$APP_ROOT/Dockerfile" "$APP_ROOT/docker-compose.yml" > "$NEW_HASH_FILE"
+
+# Determine if we need to rebuild
+REBUILD=false
+if [ ! -f "$TEMP_HASH_FILE" ]; then
+  # If the hash file doesn't exist, create it and force a rebuild
+  touch "$TEMP_HASH_FILE"
+  REBUILD=true
+else
+  # Compare the new hash with the existing one
+  if cmp -s "$TEMP_HASH_FILE" "$NEW_HASH_FILE"; then
+    # If the hashes are the same, no need to rebuild
+    REBUILD=false
+  else
+    # If the hashes are different, rebuild unless the setup marker file exists
+    if [ -f "$SETUP_MARKER_FILE" ]; then
+      # Remove the setup marker file to indicate rebuild is allowed next time
+      rm "$SETUP_MARKER_FILE"
+      REBUILD=false
+    else
+      REBUILD=true
+    fi
+  fi
+fi
+
+# Update the stored hash with the new hash
+mv "$NEW_HASH_FILE" "$TEMP_HASH_FILE"
+
+# Stop and remove containers
+docker-compose stop
+
+# Rebuild the Docker images if needed
+if [ "$REBUILD" = true ]; then
+  echo "Changes detected in Dockerfile or docker-compose.yml, rebuilding..."
+  docker-compose build --no-cache
+else
+  echo "No changes detected in Dockerfile or docker-compose.yml, skipping rebuild..."
+fi
+
+# Start the containers
+docker-compose up
+
+

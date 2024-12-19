@@ -1,0 +1,24 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "extends": "airbnb-base",
+  "rules": {
+    "max-len": ["error", 120],
+    "no-unused-vars": [
+      "off"
+    ],
+    "class-methods-use-this": "off",
+    "no-new": "off",
+    "no-undef": "off",
+    "func-names": "off",
+    "no-param-reassign": "off",
+    "no-underscore-dangle": "off",
+    "import/no-unresolved": "off"
+  }
+}
