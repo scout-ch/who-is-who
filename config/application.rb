@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require_relative "boot"
 
 require "rails"
@@ -35,12 +33,7 @@ module PbsWidget
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
-    config.time_zone = "Zurich"
-    config.i18n.default_locale = :de
+    # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-
-    config.action_dispatch.default_headers = {
-      "X-Frame-Options" => "frame-ancestors *"
-    }
   end
 end
