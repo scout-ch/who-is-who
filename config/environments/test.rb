@@ -59,11 +59,21 @@ Rails.application.configure do
   config.active_support.disallowed_deprecation_warnings = []
 
   # Raises error for missing translations.
-  # config.i18n.raise_on_missing_translations = true
+  config.i18n.raise_on_missing_translations = true
+  config.i18n.exception_handler = proc { |exception| raise exception.to_exception }
+  config.active_record.verbose_query_logs = true
 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
+
+  config.action_controller.action_on_unpermitted_parameters = :raise
+
+  config.to_prepare do
+    ActiveSupport.on_load(:active_record) do
+      ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.create_unlogged_tables = true
+    end
+  end
 end
