@@ -3,7 +3,7 @@ services:
     build: .
     environment:
       RAILS_ENV: develop
-      DATABASE_URL: postgres://postgres:password@db:5432/pbs_develop
+      DATABASE_URL: postgres://postgres:postgres@db:5432/pbs_develop
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
       BASIC_AUTH: admin:password
       HITOBITO_API_TOKEN: ${HITOBITO_API_TOKEN}
