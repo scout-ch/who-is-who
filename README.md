@@ -30,3 +30,7 @@ bin/docker_run
 ## Deploying
 
 The `main` branch is automatically deployed to `pbs-docker-widget` on Deploio (via Github connection).
+
+Also a Docker image is automatically pushed to the [GitHub Docker
+registry](https://github.com/scout-ch/who-is-who/pkgs/container/who-is-who) for
+the `main` branch and git tags.
