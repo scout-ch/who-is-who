@@ -2,9 +2,9 @@
 
 ## Environments
 
-| Deploio App         | Branch | Domain                                        | Deployment |
+| Portainer App       | Branch | Domain                                        | Deployment |
 |---------------------|--------|-----------------------------------------------|------------|
-| pbs-docker-widget   | main   | https://pbs-docker-widget.1c62958.deploio.app | auto       |
+| gs-who-is-who       | main   | https://who-is-who.pbs.ch/                    | auto       |
 
 ## Setup
 
@@ -29,8 +29,8 @@ bin/docker_run
 
 ## Deploying
 
-The `main` branch is automatically deployed to `pbs-docker-widget` on Deploio (via Github connection).
-
-Also a Docker image is automatically pushed to the [GitHub Docker
+The Docker image is automatically pushed to the [GitHub Docker
 registry](https://github.com/scout-ch/who-is-who/pkgs/container/who-is-who) for
 the `main` branch and git tags.
+
+A webhook then triggers portainer to pull the image.
