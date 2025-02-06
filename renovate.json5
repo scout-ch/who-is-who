@@ -5,17 +5,23 @@
     ":semanticCommits",
     "group:allNonMajor",
     "group:allDigest",
+    "group:rubyOnRails",
     ":enableVulnerabilityAlertsWithLabel(security)",
   ],
   packageRules: [
     {
-      matchUpdateTypes: ["minor", "patch", "digest"],
-      automerge: true,
-    },
-    {
       matchUpdateTypes: ["digest"],
+      automerge: true,
       minimumReleaseAge: "1 day",
     },
+    {
+      // Ruby doesn't follow semver, so we separate minor versions from the all non-major group
+      matchDepNames: ["ruby", "registry.docker.com/library/ruby"],
+      matchUpdateTypes: ["minor"],
+      groupName: "Ruby",
+      groupSlug: "ruby",
+      automerge: false,
+    }
   ],
   platformAutomerge: true,
   prHourlyLimit: 0,
