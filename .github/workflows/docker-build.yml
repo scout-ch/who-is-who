@@ -9,6 +9,6 @@ jobs:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Build Docker image
         run: docker build -t "${REGISTRY}/${IMAGE_NAME}" .
