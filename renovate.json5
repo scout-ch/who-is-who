@@ -4,6 +4,7 @@
     "config:best-practices",
     ":semanticCommits",
     "group:allNonMajor",
+    "group:allDigest",
     ":enableVulnerabilityAlertsWithLabel(High priority)"
   ],
   "packageRules": [
