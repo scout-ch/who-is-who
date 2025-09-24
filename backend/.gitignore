@@ -1,4 +1,5 @@
 *.env
-api/static/*
+static
 *.json
 */__pycache__/*
+__pycache__
