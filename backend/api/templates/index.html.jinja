@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>{{ home.name[locale] | e }} Who-Is-Who</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <a href={{ home.place }}><h1>{{ home.name[locale] | e }}</h1></a>
+    <h2 class="group-name">{{ group.name[locale] | e }}</h2>
+    {% if subgroups %}
+      {% include "_group.html.jinja" %}
+    {% else %}
+      {% include "_group_detail.html.jinja" %}
+    {% endif %}
+  </div>
+</body>
+</html>

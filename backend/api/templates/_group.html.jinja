@@ -1,0 +1,5 @@
+<div class="grid-container">
+{% for sgroup in subgroups %}
+  <a class="card group-card {{ loop.cycle("first-column", "second-column") }}" href="{{ sgroup.id }}.html">{{ sgroup.name[locale] | e}}</a>
+{% endfor %}
+</div>

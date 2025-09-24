@@ -1,0 +1,13 @@
+<div class="grid-container">
+{% if group.description and group.description[locale] %}
+<h4>{{ group.description[locale] }}</h4>
+{% endif %}
+{% for role in roles %}
+  <div class="card person-card {{ loop.cycle("first-column", "second-column") }}">
+    <div class="card-text">
+      <strong>{{ role.person.firstname | e }} {{ role.person.lastname | e }} / {{ role.person.nickname | e}} </strong>
+      <i>{{ role.name[locale] | e }}</i>
+    </div>
+  </div>
+{% endfor %}
+</div>
