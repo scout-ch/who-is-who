@@ -1,5 +1,8 @@
 FROM node:22 AS base
-WORKDIR /usr/local/app
+WORKDIR /usr/src/app
+
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
 
 COPY package.json package-lock.json ./
 RUN npm install
@@ -15,3 +18,24 @@ COPY src ./src
 ###################################################
 FROM base AS dev
 CMD ["npm", "run", "dev"]
+
+
+###################################################
+# Stage: prod-builder
+# 
+# Runs vite build and generates a static html/css/js site
+# for distribution
+###################################################
+FROM base AS prod-builder
+RUN npm run build
+
+###################################################
+# Stage: prod
+# 
+# Set up nginx to distribute the files
+###################################################
+FROM nginx AS prod
+
+COPY --from=prod-builder /usr/src/app/dist /usr/share/nginx/html
+CMD ["nginx", "-g", "daemon off;"]
+

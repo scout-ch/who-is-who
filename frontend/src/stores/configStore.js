@@ -15,6 +15,12 @@ export const useConfigStore = defineStore('config', {
     },
   }),
   actions: {
+    theState() {
+      return {
+        groups: this.groups,
+        roles: this.roles,
+      }
+    },
     excludeGroup(groupId) {
       this.groups.exclude.push(groupId)
     },

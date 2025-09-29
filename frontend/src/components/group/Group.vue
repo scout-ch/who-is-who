@@ -35,9 +35,12 @@ const groupId = props.groupId
 
 const expanded = ref(props.expanded)
 const exclude = ref(props.exclude)
-const computedOpenState = ref(props.open)
 
-const hasSubgroups = groupId in dataStore.subgroups && dataStore.subgroups[groupId].length > 0
+const hasSubgroups =
+  'subgroups' in dataStore &&
+  props.groupId in dataStore.subgroups &&
+  dataStore.subgroups[props.groupId].length > 0
+
 var orderedSubgroups = hasSubgroups ? dataStore.subgroups[groupId] : null
 
 function excludeGroup() {

@@ -2,7 +2,6 @@ services:
   backend:
     build:
       context: backend
-      dockerfile: Dockerfile
       target: develop
     # allow the developer to examine the api
     ports:
@@ -16,15 +15,16 @@ services:
   frontend:
     build:
       context: frontend
-      dockerfile: Dockerfile
+      target: dev
+      args:
+        #- VITE_BACKEND_URL=${VITE_BACKEND_URL}
+        - VITE_BACKEND_URL=http://backend:5000
     ports:
       - "5173:5173"
-    environment:
-      - VITE_API_URL=http://backend:5000
     links:
       - backend
     develop:
       watch:
         - action: sync
           path: frontend/
-          target: dev
+          target: /usr/src/app

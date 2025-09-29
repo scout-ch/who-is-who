@@ -6,7 +6,6 @@ import { PlayIcon, ArrowDownIcon } from '@heroicons/vue/24/outline'
 import { useConfigStore } from '@/stores/configStore'
 const configStore = useConfigStore()
 
-const htmlPage = ref('<i>To be a page </i>')
 const preview = useTemplateRef('preview')
 const loading = ref(true)
 
@@ -15,23 +14,19 @@ function fetchHtml() {
   axios
     .get('/api/render')
     .then((response) => {
-      const data = response['data']
-      const html = data[0]['html']
-      htmlPage.value = html
-    })
-    .catch(function (err) {})
-    .finally(function () {
       loading.value = false
       preview.value.src = preview.value.src
     })
+    .catch(function (err) {})
 }
 
 function generate() {
   axios
     .post('/api/config', {
-      data: configStore,
+      data: configStore.theState(),
     })
     .then((res) => {
+      console.log('posted')
       fetchHtml()
     })
 }
