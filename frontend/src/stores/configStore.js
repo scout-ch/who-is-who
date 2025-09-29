@@ -27,7 +27,7 @@ export const useConfigStore = defineStore('config', {
     includeGroup(groupId) {
       this.groups.exclude = this.groups.exclude.filter((e) => e != groupId)
     },
-    exludeRole(roleId) {
+    excludeRole(roleId) {
       this.roles.exclude.push(roleId)
     },
     includeRole(roleId) {
