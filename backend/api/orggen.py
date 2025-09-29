@@ -37,8 +37,8 @@ def index():
 
 @bp.route("/fetch_data", methods=["GET"])
 def fetch_data():
-    # groups, roles, people = extract.api_fetch_organisation_data(PBS_GROUP)
-    groups, roles, people = load.read_json("data.json")
+    groups, roles, people = extract.api_fetch_organisation_data(PBS_GROUP)
+    # groups, roles, people = load.read_json("data.json") # uncomment for testing purposes
     groups_by_id, subgroups_for_groups, roles_by_id, roles_for_groups = transform.t(
         groups, roles, people
     )

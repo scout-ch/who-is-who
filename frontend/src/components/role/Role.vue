@@ -15,7 +15,7 @@ const props = defineProps({
   },
 })
 
-defineEmits(['dragged', 'dropped'])
+const emit = defineEmits(['dragged', 'dropped'])
 
 const dataStore = useDataStore()
 const configStore = useConfigStore()
@@ -70,6 +70,10 @@ function onDragEnter(event) {
 function onDragLeave(event) {
   belowDrag.value = false
 }
+function onDrop() {
+  belowDrag.value = false
+  emit('dropped')
+}
 </script>
 
 <template>
@@ -83,10 +87,7 @@ function onDragLeave(event) {
         @click="showDetail = !showDetail"
         @dragover.prevent=""
         @dragstart="$emit('dragged')"
-        @drop="
-          belowDrag = false
-          $emit('dropped')
-        "
+        @drop="onDrop()"
         @dragenter="onDragEnter"
         @dragleave="onDragLeave"
       >
@@ -115,6 +116,4 @@ function onDragLeave(event) {
     </span>
     <RoleDetail v-show="showDetail" :roleId="props.roleId" :role="role" class="p-3" />
   </div>
-
-  <hr :class="{ hidden: !belowDrag }" />
 </template>

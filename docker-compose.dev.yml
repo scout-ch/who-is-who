@@ -1,0 +1,30 @@
+services:
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+      target: develop
+    # allow the developer to examine the api
+    ports:
+      - "5000:5000"
+
+    develop:
+      watch:
+        - action: sync
+          path: backend/
+          target: /app
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://backend:5000
+    links:
+      - backend
+    develop:
+      watch:
+        - action: sync
+          path: frontend/
+          target: dev

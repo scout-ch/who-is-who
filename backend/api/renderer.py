@@ -117,7 +117,7 @@ def _render_group(
     subgroups=[],
     roles=[],
     locale="de",
-    templates_folder="api/templates",
+    templates_folder="templates",
     template_name="index.html.jinja",
 ):
 

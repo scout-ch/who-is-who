@@ -52,7 +52,7 @@ function generate() {
         ref="preview"
         class="w-full max-w-1/1 resize overflow-auto border rounded-lg m-0"
         height="700"
-        src="/api/static/2.html"
+        src="/api/static/de/2.html"
       />
     </div>
   </div>

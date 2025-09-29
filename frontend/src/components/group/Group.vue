@@ -26,7 +26,7 @@ const props = defineProps({
   },
 })
 
-defineEmits(['dragged', 'dropped'])
+const emit = defineEmits(['dragged', 'dropped'])
 
 const configStore = useConfigStore()
 const dataStore = useDataStore()
@@ -73,6 +73,10 @@ function onDropped(index, groupId) {
 
   configStore.groups.order[groupId] = orderedSubgroups
 }
+function onDrop() {
+  belowDrag.value = false
+  emit('dropped')
+}
 </script>
 
 <template>
@@ -86,10 +90,7 @@ function onDropped(index, groupId) {
         draggable="true"
         @dragstart="$emit('dragged')"
         @dragover.prevent=""
-        @drop="
-          belowDrag = false
-          $emit('dropped')
-        "
+        @drop="onDrop()"
         @dragenter="onDragEnter"
         @dragleave="onDragLeave"
       >
@@ -105,10 +106,6 @@ function onDropped(index, groupId) {
       <XCircleIcon class="h-5 w-5 transition duration-300 hover:bg-amber-300/50" />
     </div>
   </div>
-
-  <!----- Drag drop indicator ----->
-  <hr :class="{ hidden: !belowDrag }" />
-  <!------------------------------->
 
   <!----- Subgroups --------------->
   <div v-show="expanded" v-if="hasSubgroups" class="p-2 m-1 mb-3 pr-1 border rounded-lg">
