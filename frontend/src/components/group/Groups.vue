@@ -14,7 +14,6 @@ const loading = ref(true)
 axios
   .get('/api')
   .then((response) => {
-    console.log(response.config.url)
     const data = response['data']
     dataStore.groups = data['groups']
     dataStore.subgroups = data['subgroups_for_groups']

@@ -26,7 +26,6 @@ function generate() {
       data: configStore.theState(),
     })
     .then((res) => {
-      console.log('posted')
       fetchHtml()
     })
 }
