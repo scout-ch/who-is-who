@@ -30,12 +30,20 @@ FROM base AS prod-builder
 RUN npm run build
 
 ###################################################
+# Stage: Test
+# 
+# Use Vite's preview to serve the files
+###################################################
+FROM prod-builder AS test
+CMD ["npm", "run", "preview"]
+
+###################################################
 # Stage: prod
 # 
 # Set up nginx to distribute the files
 ###################################################
 FROM nginx AS prod
 
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=prod-builder /usr/src/app/dist /usr/share/nginx/html
 CMD ["nginx", "-g", "daemon off;"]
-
