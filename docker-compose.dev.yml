@@ -6,7 +6,9 @@ services:
     # allow the developer to examine the api
     ports:
       - "5000:5000"
-
+    environment:
+      MIDATA_TOKEN: ${MIDATA_TOKEN}
+      SCOUT_URL: ${SCOUT_URL}
     develop:
       watch:
         - action: sync
@@ -17,8 +19,7 @@ services:
       context: frontend
       target: dev
       args:
-        #- VITE_BACKEND_URL=${VITE_BACKEND_URL}
-        - VITE_BACKEND_URL=http://backend:5000
+        - VITE_BACKEND_URL=${BACKEND_URL:-http://backend:5000}
     ports:
       - "5173:5173"
     links:

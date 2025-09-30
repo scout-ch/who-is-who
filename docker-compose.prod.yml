@@ -7,8 +7,6 @@ services:
     build:
       context: frontend
       target: prod
-      args:
-        - VITE_BACKEND_URL=http://backend:5000
     ports:
       - "8080:80"
     links:
