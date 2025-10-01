@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backend-secret
+type: Opaque
+stringData:
+  SECRET_TOKEN: ""
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: who-is-who-backend
+spec:
+  selector:
+    matchLabels:
+      app: who-is-who-backend
+      tier: backend
+      track: stable
+  template:
+    metadata:
+      labels:
+        app: who-is-who-backend
+        tier: backend
+        track: stable
+    spec:
+      containers:
+        - name: who-is-who-backend
+          image: ghcr.io/scout-ch/who-is-who-backend:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: SCOUT_URL
+              value: "db.scout.ch"
+            - name: MIDATA_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: SECRET_TOKEN
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: who-is-who-backend
+    tier: backend
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: who-is-who-frontend
+spec:
+  selector:
+    matchLabels:
+      app: who-is-who-frontend-app
+  template:
+    metadata:
+      labels:
+        app: who-is-who-frontend-app
+    spec:
+      containers:
+        - name: who-is-who-frontend-app
+          image: ghcr.io/scout-ch/who-is-who-frontend:latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: who-is-who-frontend
+spec:
+  type: LoadBalancer
+  selector:
+    app: who-is-who-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
