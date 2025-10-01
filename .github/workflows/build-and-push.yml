@@ -30,7 +30,7 @@ jobs:
 
     - name: Build frontend
       run: |
-        docker build -t {{ env.FRONTEND_IMAGE_NAME }}:latest frontend --target prod
+        docker build --target prod -t {{ env.FRONTEND_IMAGE_NAME }}:latest frontend/
       
     - name: Push frontend
       run: |
