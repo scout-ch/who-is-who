@@ -59,11 +59,15 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: who-is-who-frontend-app
+      app: who-is-who
+      tier: frontend
+      track: stable
   template:
     metadata:
       labels:
-        app: who-is-who-frontend-app
+        app: who-is-who
+        tier: frontend
+        track: stable
     spec:
       containers:
         - name: who-is-who-frontend-app
@@ -78,8 +82,9 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: who-is-who-frontend
+    app: who-is-who
+    tier: frontend
   ports:
-    - protocol: TCP
+    - protocol: "TCP"
       port: 80
       targetPort: 80
