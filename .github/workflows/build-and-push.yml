@@ -16,8 +16,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      attestations: write
-      id-token: write
     
     steps:
     - name: Checkout repository
@@ -30,18 +28,10 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build and push frontend
-      uses: docker/build-push-action@v6
-      with:
-        context: "{{ defaultContext }}:frontend"
-        push: true
-        tags: ${{ env.FRONTEND_IMAGE_NAME }}:latest
-        target: prod
+    - name: Build frontend
+      run: |
+        docker build -t {{ env.FRONTEND_IMAGE_NAME }}:latest frontend --target prod
       
-    - name: Build and push backend
-      uses: docker/build-push-action@v6
-      with:
-        context: "{{ defaultContext }}:backend"
-        push: true
-        tags: ${{ env.BACKEND_IMAGE_NAME }}:latest
-        target: prod
+    - name: Push frontend
+      run: |
+        docker push {{ env.FRONTEND_IMAGE_NAME }}:latest
