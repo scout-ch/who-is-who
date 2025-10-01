@@ -19,6 +19,9 @@ CONFIG_DATA = "config.json"
 
 @bp.route("/", methods=["GET"])
 def index():
+    if not os.path.isfile("transformed_data.json"):
+        fetch_data()
+
     data = load.read_json()
     groups_by_id = data["groups_by_id"]
     roles_by_id = data["roles_by_id"]
