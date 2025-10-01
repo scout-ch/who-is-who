@@ -5,7 +5,7 @@ import os
 TOKEN = os.environ.get("MIDATA_TOKEN")
 SCOUT_URL = os.environ.get("SCOUT_URL")
 
-API_URL = SCOUT_URL + "/api"
+API_URL = f"{SCOUT_URL}/api" if SCOUT_URL else "/api"
 HEADERS = {
     "X-Token": TOKEN,
     "accept": "*//",
