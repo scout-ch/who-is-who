@@ -1,6 +1,9 @@
 import requests as re
 import math
 import os
+import logging
+
+from api.app import APPNAME
 
 TOKEN = os.environ.get("MIDATA_TOKEN")
 SCOUT_URL = os.environ.get("SCOUT_URL")
@@ -14,6 +17,8 @@ HEADERS = {
 GROUPS_FIELDS = ["id", "name"]
 PEOPLE_FIELDS = ["first_name", "last_name", "nick_name"]
 MAX_ID_FETCH = 600
+
+log = logging.getLogger(".".join((APPNAME, "Extract")))
 
 
 def api_fetch_organisation_data(org_id):
@@ -131,27 +136,41 @@ def api_params(locale="de", include=[], fields={}, filter={}, page=1, pagesize=1
     return params
 
 
+def _response_ok(response):
+    if response.status_code == re.codes.ok:
+        return True
+    log.error(f"[{response.status_code}]: {response.url}")
+    return False
+
+def _has_data(response):
+    if "data" in response.json()
+        return True
+    log.error(f"No data field: {response.json()}")
+    return False
+
+
 def _get(url, params):
-    print(f"\nGetting page for url {url} with params: \n{params}")
     response = re.get(url, headers=HEADERS, params=params)
-    print(response.url)
-    res = response.json()
-    return res["data"]
+    if not _response_ok(response) or not _has_data(response):
+        return []
+
+    return response.json()["data"]
 
 
 def _get_all_pages(url, params):
-    print(f"\nGetting all pages for url {url} with params: \n{params}")
     response = re.get(url, headers=HEADERS, params=params)
+    if not _response_ok(response) or not _has_data(response):
+        return []
 
-    print(f"\n{response.url}")
     res = response.json()
     data = list(res["data"])
 
-    if not data:
-        return []
-
     while "next" in res["links"] and not res["links"]["self"] == res["links"]["last"]:
         res = re.get(SCOUT_URL + res["links"]["next"], headers=HEADERS)
+
+        if not _response_ok(response) or not _has_data(response):
+            return data
+
         res = res.json()
 
         data.extend(res["data"])

@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_cors import CORS
 
+APPNAME = "WIW_API"
+
 
 def create_app():
     # create and configure the app
