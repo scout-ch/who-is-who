@@ -142,8 +142,9 @@ def _response_ok(response):
     log.error(f"[{response.status_code}]: {response.url}")
     return False
 
+
 def _has_data(response):
-    if "data" in response.json()
+    if "data" in response.json():
         return True
     log.error(f"No data field: {response.json()}")
     return False
