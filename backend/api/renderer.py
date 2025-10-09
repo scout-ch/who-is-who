@@ -12,15 +12,18 @@ def render_groups(
     locale="de",
     group_options={},
     role_options={},
+    images=[],
 ):
+    root_id = str(root_link)
     if isinstance(root_link, int):
         root_link = str(root_link) + ".html"
     elif root_link.split(".")[-1] != "html":
         root_link += ".html"
 
     group_pages = {}
-
-    for id, group in groups_by_id.items():
+    for id in _groups_to_render(
+        root_id, subgroups_for_groups, group_options["exclude"]
+    ):
         if id in group_options["exclude"]:
             continue
 
@@ -50,13 +53,28 @@ def render_groups(
 
         group_pages[id] = _render_group(
             root=_root({locale: root_name}, root_link),
-            group=_group_data(group, group_options),
+            group=_group_data(groups_by_id[id], group_options),
             subgroups=subgroups,
             roles=roles,
+            images=images,
             locale=locale,
         )
 
     return group_pages
+
+
+def _groups_to_render(root_group: int, subgroups_for_groups: {}, to_exclude=[]):
+    groups_to_process = copy.deepcopy(subgroups_for_groups[root_group])
+    result = [root_group]
+    while groups_to_process:
+        current_group = groups_to_process.pop()
+        if current_group in to_exclude:
+            continue
+
+        result.append(current_group)
+        if current_group in subgroups_for_groups:
+            groups_to_process.extend(subgroups_for_groups[current_group])
+    return result
 
 
 def _sort_by_order(data, order):
@@ -108,6 +126,12 @@ def _role_data(role, role_options):
 
     _option_overwrite(result, role_options, id, "name")
 
+    if id in role_options["tel"]:
+        result["tel"] = role_options["tel"][id]
+
+    if id in role_options["email"]:
+        result["email"] = role_options["email"][id]
+
     return result
 
 
@@ -117,6 +141,7 @@ def _render_group(
     subgroups=[],
     roles=[],
     locale="de",
+    images=[],
     templates_folder="templates",
     template_name="index.html.jinja",
 ):
@@ -129,6 +154,7 @@ def _render_group(
         "group": group,
         "subgroups": subgroups,
         "roles": roles,
+        "images": images,
         "locale": locale,
     }
     return template.render(context)

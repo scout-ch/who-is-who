@@ -97,6 +97,7 @@ def render():
             locale=locale,
             group_options=config["groups"],
             role_options=config["roles"],
+            images=config["images"],
         )
         for key in group_pages:
             load.store(group_pages[key], str(key), builddir=f"api/static/{locale}")

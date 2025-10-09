@@ -4,9 +4,25 @@
 {% endif %}
 {% for role in roles %}
   <div class="card person-card {{ loop.cycle("first-column", "second-column") }}">
+    {% if role.person.id in images %}
+      <img class="profile-picture" src=/api/image/{{ role.person.id }} />
+    {% else %}
+      <img class="profile-picture" src=/api/static/favicon.png />
+    {% endif %}
     <div class="card-text">
       <strong>{{ role.person.firstname | e }} {{ role.person.lastname | e }} / {{ role.person.nickname | e}} </strong>
+      <br/>
       <i>{{ role.name[locale] | e }}</i>
+      <br/>
+      <br/>
+      {% if role.tel %}
+        Tel.: {{ role.tel | e }} 
+      {% endif %}
+      <br/>
+      {% if role.email %}
+        Email: {{ role.email | e }} 
+      {% endif %}
+
     </div>
   </div>
 {% endfor %}
