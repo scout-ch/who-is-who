@@ -1,5 +1,38 @@
 import json
 import os
+import boto3
+from botocore.client import Config
+
+
+s3 = boto3.client(
+    "s3",
+    endpoint_url=f"{os.environ['MINIO_URL']}",
+    aws_access_key_id=os.environ["MINIO_ACCESS_KEY"],
+    aws_secret_access_key=os.environ["MINIO_SECRET_KEY"],
+    config=Config(signature_version="s3v4"),
+    region_name="us-east-1",
+)
+bucket_name = os.environ["MINIO_BUCKET"]
+
+
+try:
+    s3.head_bucket(Bucket=bucket_name)
+except:
+    s3.create_bucket(Bucket=bucket_name)
+
+
+def upload_image(image, imagename):
+    s3.upload_fileobj(image, bucket_name, imagename)
+
+
+def get_image(imagename):
+    return s3.get_object(Bucket=bucket_name, Key=imagename)
+
+
+def get_image_url(imagename):
+    return s3.get_presigned_url(
+        "get_object", Params={"Bucket": bucket_name, "Key": imagename}, ExpiresIn=3600
+    )
 
 
 def store(page, page_name, builddir="build"):
@@ -29,6 +62,9 @@ def store_to_json(data, filepath="transformed_data.json"):
         )
 
 
-def read_json(file="transformed_data.json"):
+def read_json(file):
+    if not os.path.isfile(file):
+        return {}
+
     with open(file, "r", encoding="utf-8") as file:
         return json.load(file)

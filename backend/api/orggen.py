@@ -38,6 +38,26 @@ def index():
     )
 
 
+@bp.route("/image-url/<int:person_id>", methods=["GET"])
+def get_presigned_url(person_id):
+    try:
+        url = load.get_image_url(person_id)
+        return {"url": url}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@bp.route("/image-upload/<int:person_id>", methods=["POST"])
+def image_upload(person_id):
+    file = request.files["image"]
+    load.upload_image(file, person_id)
+    try:
+        url = load.get_image_url(person_id)
+        return {"url": url}
+    except Exception as e:
+        return {"error": str(e)}
+
+
 @bp.route("/fetch_data", methods=["GET"])
 def fetch_data():
     groups, roles, people = extract.api_fetch_organisation_data(PBS_GROUP)
