@@ -9,11 +9,19 @@ services:
     environment:
       MIDATA_TOKEN: ${MIDATA_TOKEN}
       SCOUT_URL: ${SCOUT_URL}
+      MINIO_URL: ${MINIO_ENDPOINT:-http://objectstorage:9000} # Needs to use the internal network service name
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      MINIO_BUCKET: flask-bucket
+    depends_on:
+      - objectstorage
     develop:
       watch:
         - action: sync
           path: backend/
           target: /app
+    stdin_open: true
+    tty: true
   frontend:
     build:
       context: frontend
@@ -22,10 +30,24 @@ services:
         - VITE_BACKEND_URL=${BACKEND_URL:-http://backend:5000}
     ports:
       - "5173:5173"
-    links:
+    depends_on:
       - backend
     develop:
       watch:
         - action: sync
           path: frontend/
           target: /usr/src/app
+  objectstorage:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+
+volumes:
+  minio-data:

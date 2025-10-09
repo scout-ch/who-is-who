@@ -114,6 +114,6 @@ function onDrop() {
         </div>
       </div>
     </span>
-    <RoleDetail v-show="showDetail" :roleId="props.roleId" :role="role" class="p-3" />
+    <RoleDetail v-show="showDetail" :roleId="props.roleId" :person_id="person.id" :role="role" />
   </div>
 </template>

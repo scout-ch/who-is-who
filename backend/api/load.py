@@ -22,17 +22,18 @@ except:
 
 
 def upload_image(image, imagename):
-    s3.upload_fileobj(image, bucket_name, imagename)
+    filename = imagename + os.path.splitext(image.filename)[1]
+    s3.upload_fileobj(
+        image, bucket_name, filename, ExtraArgs={"ContentType": image.content_type}
+    )
 
 
 def get_image(imagename):
-    return s3.get_object(Bucket=bucket_name, Key=imagename)
-
-
-def get_image_url(imagename):
-    return s3.get_presigned_url(
-        "get_object", Params={"Bucket": bucket_name, "Key": imagename}, ExpiresIn=3600
-    )
+    objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=imagename)
+    if objects["KeyCount"] == 0:
+        print("No keys found for {imagename}")
+        return None
+    return s3.get_object(Bucket=bucket_name, Key=objects["Contents"][0]["Key"])
 
 
 def store(page, page_name, builddir="build"):

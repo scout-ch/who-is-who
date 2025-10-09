@@ -39,12 +39,14 @@ def _transform_group(group):
 def _transform_role(role, person):
     # TODO: change as soon as human readable locale based roles are introduced to the JSON API
     name = role["attributes"]["type"].split(":")[-1]
+    person_id = person["id"]
     person = person["attributes"]
     return {
         "id": role["id"],
         "name": {"de": name, "fr": name, "it": name},
         "type": role["attributes"]["type"],
         "person": {
+            "id": person_id,
             "firstname": person["first_name"],
             "lastname": person["last_name"],
             "nickname": person["nickname"],

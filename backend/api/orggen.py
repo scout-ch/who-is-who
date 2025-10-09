@@ -1,4 +1,5 @@
 from flask import (
+    Response,
     Blueprint,
     request,
     jsonify,
@@ -16,13 +17,16 @@ bp = Blueprint("/", __name__)
 PBS_GROUP = 2
 CONFIG_DATA = "config.json"
 
+DATA_FILE = "transformed_data.json"
+CONFIG_FILE = "config.json"
+
 
 @bp.route("/", methods=["GET"])
 def index():
-    if not os.path.isfile("transformed_data.json"):
+    if not os.path.isfile(DATA_FILE):
         fetch_data()
 
-    data = load.read_json()
+    data = load.read_json(DATA_FILE)
     groups_by_id = data["groups_by_id"]
     roles_by_id = data["roles_by_id"]
     subgroups_for_group = data["subgroups_for_groups"]
@@ -38,24 +42,20 @@ def index():
     )
 
 
-@bp.route("/image-url/<int:person_id>", methods=["GET"])
-def get_presigned_url(person_id):
+@bp.route("/image/<string:person_id>", methods=["GET"])
+def get_image(person_id):
     try:
-        url = load.get_image_url(person_id)
-        return {"url": url}
+        image = load.get_image(person_id)
+        return Response(image["Body"].read(), mimetype=image["ContentType"])
     except Exception as e:
-        return {"error": str(e)}
+        return {"error": str(e)}, 404
 
 
-@bp.route("/image-upload/<int:person_id>", methods=["POST"])
+@bp.route("/image-upload/<string:person_id>", methods=["POST"])
 def image_upload(person_id):
     file = request.files["image"]
     load.upload_image(file, person_id)
-    try:
-        url = load.get_image_url(person_id)
-        return {"url": url}
-    except Exception as e:
-        return {"error": str(e)}
+    return "success"
 
 
 @bp.route("/fetch_data", methods=["GET"])
@@ -78,9 +78,9 @@ def fetch_data():
 
 @bp.route("/render", methods=["GET"])
 def render():
-    config = load.read_json("config.json")
+    config = load.read_json(CONFIG_FILE)
 
-    data = load.read_json("transformed_data.json")
+    data = load.read_json(DATA_FILE)
     groups_by_id = data["groups_by_id"]
     roles_by_id = data["roles_by_id"]
     subgroups_for_group = data["subgroups_for_groups"]
@@ -109,10 +109,10 @@ def render():
 def config():
     if request.method == "POST":
         data = request.get_json()["data"]
-        load.store_to_json(data, "config.json")
+        load.store_to_json(data, CONFIG_FILE)
         return jsonify("success")
     elif request.method == "GET":
-        return jsonify(load.read_json("config.json"))
+        return jsonify(load.read_json(CONFIG_FILE))
 
 
 @bp.route("/download-zip")

@@ -144,7 +144,7 @@ def _response_ok(response):
 
 
 def _has_data(response):
-    if "data" in response.json():
+    if "data" in response.json() and len(response.json()["data"]) > 0:
         return True
     log.error(f"No data field: {response.json()}")
     return False

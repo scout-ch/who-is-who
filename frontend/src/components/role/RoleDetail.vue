@@ -2,9 +2,14 @@
 import { useConfigStore } from '@/stores/configStore'
 
 import ConfigTextInput from '@/components/widgets/ConfigTextInput.vue'
+import ConfigInput from '@/components/widgets/ConfigInput.vue'
+import PersonImage from '@/components/widgets/PersonImage.vue'
 
 const props = defineProps({
   roleId: {
+    type: String,
+  },
+  person_id: {
     type: String,
   },
   role: {
@@ -17,18 +22,30 @@ const configStore = useConfigStore()
 </script>
 
 <template>
-  <div
-    class="w-full flex p-1 text-xl justify-between select-none bg-gray-50 rounded-md hover:bg-gray-100"
-  >
-    <img src="/favicon.png" class="max-h-27 border rounded-lg aspect-square mr-2" />
-    <div class="w-full">
-      <ConfigTextInput
-        :id="props.roleId"
-        :configField="configStore.roles.name"
-        :defaultTextDe="props.role.de"
-        :defaultTextFr="props.role.fr"
-        :defaultTextIt="props.role.it"
-      />
+  <div>
+    <div class="w-full flex p-1 text-xl justify-between select-none rounded-md">
+      <PersonImage :person_id="props.person_id" />
+      <div class="w-full">
+        <ConfigTextInput
+          :id="props.roleId"
+          :configField="configStore.roles.name"
+          :defaultTextDe="props.role.de"
+          :defaultTextFr="props.role.fr"
+          :defaultTextIt="props.role.it"
+        />
+      </div>
     </div>
+    <ConfigInput
+      :id="props.roleId"
+      :configField="configStore.roles.tel"
+      label="Telefon"
+      placeholder="+41 345 534 22"
+    />
+    <ConfigInput
+      :id="props.roleId"
+      :configField="configStore.roles.email"
+      label="Email"
+      placeholder="mail@something.ch"
+    />
   </div>
 </template>

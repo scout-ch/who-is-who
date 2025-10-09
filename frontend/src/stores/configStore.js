@@ -12,13 +12,17 @@ export const useConfigStore = defineStore('config', {
       exclude: [],
       name: {}, // roles.overwritten[id] = { "de": "Mitglied", "fr": "Mèmbre", "it": "..." }
       order: {},
+      tel: {},
+      email: {},
     },
+    images: [],
   }),
   actions: {
     theState() {
       return {
         groups: this.groups,
         roles: this.roles,
+        images: this.images,
       }
     },
     excludeGroup(groupId) {

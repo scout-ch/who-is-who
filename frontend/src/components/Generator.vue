@@ -17,7 +17,9 @@ function fetchHtml() {
       loading.value = false
       preview.value.src = preview.value.src
     })
-    .catch(function (err) {})
+    .catch(function (err) {
+      console.error('Failed to render:', err)
+    })
 }
 
 function generate() {
@@ -27,6 +29,9 @@ function generate() {
     })
     .then((res) => {
       fetchHtml()
+    })
+    .catch((err) => {
+      console.error('Failed to post config:', err)
     })
 }
 </script>
