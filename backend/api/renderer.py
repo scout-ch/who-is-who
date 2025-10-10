@@ -8,21 +8,16 @@ def render_groups(
     subgroups_for_groups,
     roles_for_groups,
     root_name="",
-    root_link="",
+    root_id=0,
     locale="de",
+    link_prefix="",
     group_options={},
     role_options={},
     images=[],
 ):
-    root_id = str(root_link)
-    if isinstance(root_link, int):
-        root_link = str(root_link) + ".html"
-    elif root_link.split(".")[-1] != "html":
-        root_link += ".html"
-
     group_pages = {}
     for id in _groups_to_render(
-        root_id, subgroups_for_groups, group_options["exclude"]
+        str(root_id), subgroups_for_groups, group_options["exclude"]
     ):
         if id in group_options["exclude"]:
             continue
@@ -52,11 +47,13 @@ def render_groups(
                 roles = _sort_by_order(roles, role_options["order"][id])
 
         group_pages[id] = _render_group(
-            root=_root({locale: root_name}, root_link),
+            root_name=root_name,
+            root_id=root_id,
             group=_group_data(groups_by_id[id], group_options),
             subgroups=subgroups,
             roles=roles,
             images=images,
+            link_prefix=link_prefix,
             locale=locale,
         )
 
@@ -84,8 +81,8 @@ def _sort_by_order(data, order):
     return sorted(data, key=lambda entry: order.index(entry["id"]))
 
 
-def _root(name, link):
-    return {"name": name, "place": link}
+def _root(name, group_id):
+    return {"name": name, "group_id": group_id}
 
 
 def _option_overwrite(data, options, id, label):
@@ -136,12 +133,14 @@ def _role_data(role, role_options):
 
 
 def _render_group(
-    root,
+    root_name,
+    root_id,
     group,
     subgroups=[],
     roles=[],
     locale="de",
     images=[],
+    link_prefix="",
     templates_folder="templates",
     template_name="index.html.jinja",
 ):
@@ -150,11 +149,13 @@ def _render_group(
     env = Environment(loader=loader)
     template = env.get_template(template_name)
     context = {
-        "home": root,
+        "root_name": root_name,
+        "root_id": root_id,
         "group": group,
         "subgroups": subgroups,
         "roles": roles,
         "images": images,
+        "link_prefix": link_prefix,
         "locale": locale,
     }
     return template.render(context)

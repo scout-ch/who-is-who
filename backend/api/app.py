@@ -9,8 +9,8 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
 
-    from . import orggen
+    from . import routes
 
-    app.register_blueprint(orggen.bp)
+    app.register_blueprint(routes.bp)
 
     return app

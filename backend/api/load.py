@@ -1,3 +1,4 @@
+from io import BytesIO, StringIO
 import json
 import os
 import boto3
@@ -34,6 +35,22 @@ def get_image(imagename):
         print("No keys found for {imagename}")
         return None
     return s3.get_object(Bucket=bucket_name, Key=objects["Contents"][0]["Key"])
+
+
+def store_html(group_id, locale, page):
+    filename = f"g_{group_id}_{locale}.html"
+
+    s3.upload_fileobj(
+        BytesIO(bytes(page, encoding="utf-8")),
+        bucket_name,
+        filename,
+        ExtraArgs={"ContentType": "text/html"},
+    )
+
+
+def get_html(group_id, locale):
+    filename = f"g_{group_id}_{locale}.html"
+    return s3.get_object(Bucket=bucket_name, Key=filename)
 
 
 def store(page, page_name, builddir="build"):

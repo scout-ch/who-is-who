@@ -42,6 +42,20 @@ def index():
     )
 
 
+@bp.route("/html/<string:locale>/<int:group_id>", methods=["GET"])
+def get_html(locale, group_id):
+    try:
+        html = load.get_html(group_id, locale)
+        return html["Body"].read()
+    except Exception as e:
+        return {"error": str(e)}, 404
+
+
+@bp.route("/<path:prefix>/styles.css", methods=["GET"])
+def get_style(prefix):
+    return send_file("styles.css")
+
+
 @bp.route("/image/<string:person_id>", methods=["GET"])
 def get_image(person_id):
     try:
@@ -93,15 +107,16 @@ def render():
             subgroups_for_groups=subgroups_for_group,
             roles_for_groups=roles_for_groups,
             root_name="PBS",
-            root_link="2",
+            root_id=PBS_GROUP,
             locale=locale,
             group_options=config["groups"],
             role_options=config["roles"],
+            link_prefix="/api/html",
             images=config["images"],
         )
         for key in group_pages:
-            load.store(group_pages[key], str(key), builddir=f"api/static/{locale}")
-            print(f"stored {len(groups_by_id)} files for locale {locale}")
+            load.store_html(key, locale, group_pages[key])
+        print(f"stored {len(group_pages)} files for locale {locale}")
 
     return jsonify(group_pages)
 
@@ -120,13 +135,39 @@ def config():
 def download_zip():
     memory_file = BytesIO()
 
+    config = load.read_json(CONFIG_FILE)
+
+    data = load.read_json(DATA_FILE)
+    groups_by_id = data["groups_by_id"]
+    roles_by_id = data["roles_by_id"]
+    subgroups_for_group = data["subgroups_for_groups"]
+    roles_for_groups = data["roles_for_groups"]
+
+    pages = {}
+    locales = ["de", "fr", "it"]
+    for locale in locales:
+        group_pages = renderer.render_groups(
+            groups_by_id=groups_by_id,
+            roles_by_id=roles_by_id,
+            subgroups_for_groups=subgroups_for_group,
+            roles_for_groups=roles_for_groups,
+            root_name="PBS",
+            root_id=PBS_GROUP,
+            locale=locale,
+            group_options=config["groups"],
+            role_options=config["roles"],
+            images=config["images"],
+        )
+        for key in group_pages:
+            pages[f"{locale}/{key}.html"] = group_pages[key]
+
     with zipfile.ZipFile(memory_file, "w", zipfile.ZIP_DEFLATED) as zf:
-        # Add files dynamically (could be from disk, database, etc.)
-        for file in os.listdir("api/static"):
-            zf.write(
-                os.path.join("api/static", file),
-                arcname=os.path.join("who-is-who", file),
-            )
+        for filename, html in pages.items():
+            print(os.path.join("wiw", filename))
+            zf.writestr(os.path.join("who-is-who", filename), html)
+
+        for locale in locales:
+            zf.write("api/styles.css", os.path.join("who-is-who", locale, "styles.css"))
 
     memory_file.seek(0)
 
