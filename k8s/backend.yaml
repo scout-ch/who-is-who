@@ -29,13 +29,11 @@ spec:
     matchLabels:
       app: who-is-who
       tier: backend
-      track: stable
   template:
     metadata:
       labels:
         app: who-is-who
         tier: backend
-        track: stable
     spec:
       containers:
         - name: who-is-who-backend
