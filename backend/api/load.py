@@ -46,11 +46,11 @@ def get_image(imagename):
 def store_html(group_id, locale, page):
     filename = f"g_{group_id}_{locale}.html"
 
-    s3.upload_fileobj(
-        BytesIO(bytes(page, encoding="utf-8")),
-        bucket_name,
-        filename,
-        ExtraArgs={"ContentType": "text/html"},
+    s3.put_object(
+        Bucket=bucket_name,
+        Key=filename,
+        Body=bytes(page, encoding="utf-8"),
+        ContentType="text/html",
     )
 
 
