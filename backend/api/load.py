@@ -7,13 +7,13 @@ from botocore.client import Config
 
 s3 = boto3.client(
     "s3",
-    endpoint_url=f"{os.environ['MINIO_URL']}",
-    aws_access_key_id=os.environ["MINIO_ACCESS_KEY"],
-    aws_secret_access_key=os.environ["MINIO_SECRET_KEY"],
+    endpoint_url=f"{os.environ['S3_URL']}",
+    aws_access_key_id=os.environ["S3_ACCESS_KEY"],
+    aws_secret_access_key=os.environ["S3_SECRET_KEY"],
     config=Config(signature_version="s3v4"),
     region_name="us-east-1",
 )
-bucket_name = os.environ["MINIO_BUCKET"]
+bucket_name = os.environ["S3_BUCKET"]
 
 
 try:
