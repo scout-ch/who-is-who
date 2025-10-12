@@ -1,12 +1,4 @@
 apiVersion: v1
-kind: Secret
-metadata:
-  name: backend-secret
-type: Opaque
-stringData:
-  SECRET_TOKEN: ""
----
-apiVersion: v1
 kind: Service
 metadata:
   name: backend
@@ -43,8 +35,22 @@ spec:
           env:
             - name: SCOUT_URL
               value: "https://db.scout.ch"
+            - name: S3_URL
+              value: "https://s3.pub1.infomaniak.cloud/"
+            - name: S3_BUCKET
+              value: "who-is-who"
             - name: MIDATA_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: backend-secret
                   key: SECRET_TOKEN
+            - name: S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-access-secret
+                  key: S3_ACCESS_KEY
+            - name: S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-key-secret
+                  key: S3_SECRET_KEY
