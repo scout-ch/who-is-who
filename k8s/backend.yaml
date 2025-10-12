@@ -47,10 +47,10 @@ spec:
             - name: S3_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: s3-access-secret
+                  name: backend-secret
                   key: S3_ACCESS_KEY
             - name: S3_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: s3-key-secret
+                  name: backend-secret
                   key: S3_SECRET_KEY

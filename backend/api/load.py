@@ -4,13 +4,19 @@ import os
 import boto3
 from botocore.client import Config
 
-
 s3 = boto3.client(
     "s3",
     endpoint_url=f"{os.environ['S3_URL']}",
     aws_access_key_id=os.environ["S3_ACCESS_KEY"],
     aws_secret_access_key=os.environ["S3_SECRET_KEY"],
-    config=Config(signature_version="s3v4"),
+    config=Config(
+        signature_version="s3v4",
+        s3={
+            "use_accelerate_endpoint": False,
+            "addressing_style": "path",
+            "payload_signing_enabled": False,
+        },
+    ),
     region_name="us-east-1",
 )
 bucket_name = os.environ["S3_BUCKET"]
