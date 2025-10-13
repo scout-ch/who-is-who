@@ -31,6 +31,7 @@ def upload_image(image, imagename):
 
 
 def _upload_object(name, data, content_type):
+    log.log(f"Uploading {name} with data {data}")
     try:
         conn.object_store.upload_object(
             container=container_name,
