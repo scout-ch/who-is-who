@@ -1,57 +1,47 @@
-from io import BytesIO, StringIO
 import json
 import os
-import boto3
-from botocore.client import Config
 
-s3 = boto3.client(
-    "s3",
-    endpoint_url=f"{os.environ['S3_URL']}",
-    aws_access_key_id=os.environ["S3_ACCESS_KEY"],
-    aws_secret_access_key=os.environ["S3_SECRET_KEY"],
-    config=Config(
-        signature_version="s3",
-    ),
-    region_name="us-east-1",
+from openstack import connection
+
+conn = connection.Connection(
+    auth_url=os.environ["SWIFT_AUTH_URL"],
+    project_name=os.environ["SWIFT_PROJECT"],
+    username=os.environ["SWIFT_USERNAME"],
+    password=os.environ["SWIFT_PASSWORD"],
+    user_domain_name="default",
+    project_domain_name="default",
+    region_name="dc3-a",
 )
-bucket_name = os.environ["S3_BUCKET"]
+container_name = os.environ["SWIFT_CONTAINER"]
 
 
-try:
-    s3.head_bucket(Bucket=bucket_name)
-except:
-    s3.create_bucket(Bucket=bucket_name)
+def upload_html(group_id, locale, page):
+    filename = f"g_{group_id}_{locale}.html"
+    conn.upload_object(
+        container=container_name,
+        name=filename,
+        data=page.encode("utf-8"),
+        content_type="text/html",
+    )
 
 
 def upload_image(image, imagename):
     filename = imagename + os.path.splitext(image.filename)[1]
-    s3.upload_fileobj(
-        image, bucket_name, filename, ExtraArgs={"ContentType": image.content_type}
+    conn.upload_object(
+        container=container_name,
+        name=filename,
+        data=image,
+        content_type=image.content_type,
     )
 
 
 def get_image(imagename):
-    objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=imagename)
-    if objects["KeyCount"] == 0:
-        print("No keys found for {imagename}")
-        return None
-    return s3.get_object(Bucket=bucket_name, Key=objects["Contents"][0]["Key"])
-
-
-def store_html(group_id, locale, page):
-    filename = f"g_{group_id}_{locale}.html"
-
-    s3.put_object(
-        Bucket=bucket_name,
-        Key=filename,
-        Body=bytes(page, encoding="utf-8"),
-        ContentType="text/html",
-    )
+    return conn.object_store.download_object(container=container_name, obj=imagename)
 
 
 def get_html(group_id, locale):
     filename = f"g_{group_id}_{locale}.html"
-    return s3.get_object(Bucket=bucket_name, Key=filename)
+    return conn.object_store.download_object(container=container_name, obj=filename)
 
 
 def store(page, page_name, builddir="build"):

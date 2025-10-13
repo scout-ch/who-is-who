@@ -115,7 +115,7 @@ def render():
             images=config["images"],
         )
         for key in group_pages:
-            load.store_html(key, locale, group_pages[key])
+            load.upload_html(key, locale, group_pages[key])
         print(f"stored {len(group_pages)} files for locale {locale}")
 
     return jsonify(group_pages)

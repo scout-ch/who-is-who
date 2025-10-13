@@ -35,22 +35,24 @@ spec:
           env:
             - name: SCOUT_URL
               value: "https://db.scout.ch"
-            - name: S3_URL
-              value: "https://s3.pub1.infomaniak.cloud/"
-            - name: S3_BUCKET
+            - name: SWIFT_PROJECT
+              value: "PCP-8YSS2UM"
+            - name: SWIFT_AUTH_URL
+              value: "https://api.pub1.infomaniak.cloud/identity/v3"
+            - name: SWIFT_CONTAINER
               value: "who-is-who"
             - name: MIDATA_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: backend-secret
                   key: SECRET_TOKEN
-            - name: S3_ACCESS_KEY
+            - name: SWIFT_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: backend-secret
-                  key: S3_ACCESS_KEY
-            - name: S3_SECRET_KEY
+                  key: SWIFT_USERNAME
+            - name: SWIFT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: backend-secret
-                  key: S3_SECRET_KEY
+                  key: SWIFT_PASSWORD
