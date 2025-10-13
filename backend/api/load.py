@@ -1,7 +1,10 @@
 import json
 import os
+import logging
 
 from openstack import connection
+
+log = logging.getLogger(".".join((APPNAME, "Load")))
 
 conn = connection.Connection(
     auth_url=os.environ["SWIFT_AUTH_URL"],
@@ -17,22 +20,24 @@ container_name = os.environ["SWIFT_CONTAINER"]
 
 def upload_html(group_id, locale, page):
     filename = f"g_{group_id}_{locale}.html"
-    conn.object_store.upload_object(
-        container=container_name,
-        name=filename,
-        data=page.encode("utf-8"),
-        content_type="text/html",
-    )
+    _upload_object(name=filename, data=page.encode("utf-8"), content_type="text/html")
 
 
 def upload_image(image, imagename):
     filename = imagename + os.path.splitext(image.filename)[1]
-    conn.object_store.upload_object(
-        container=container_name,
-        name=filename,
-        data=image,
-        content_type=image.content_type,
-    )
+    _upload_object(name=filename, data=image, content_type=image.content_type)
+
+
+def _upload_object(name, data, content_type):
+    try:
+        conn.object_store.upload_object(
+            container=container_name,
+            name=name,
+            data=data,
+            content_type=content_type,
+        )
+    except Exception as e:
+        log.error(f"Upload failed: {e}")
 
 
 def get_image(imagename):
