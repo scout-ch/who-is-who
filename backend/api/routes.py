@@ -8,9 +8,14 @@ from flask import (
 import zipfile
 from io import BytesIO
 import os
+import logging
 
 
 from . import extract, transform, load, renderer
+
+from api.app import APPNAME
+
+log = logging.getLogger(".".join((APPNAME, "Renderer")))
 
 bp = Blueprint("/", __name__)
 
@@ -59,8 +64,8 @@ def get_style(prefix):
 @bp.route("/image/<string:person_id>", methods=["GET"])
 def get_image(person_id):
     try:
-        content_type, image = load.get_image(person_id)
-        return Response(image, mimetype=content_type)
+        obj, image = load.get_image(person_id)
+        return Response(image, mimetype=obj.content_type)
     except Exception as e:
         return {"error": str(e)}, 404
 
@@ -68,8 +73,8 @@ def get_image(person_id):
 @bp.route("/image-upload/<string:person_id>", methods=["POST"])
 def image_upload(person_id):
     file = request.files["image"]
-    load.upload_image(file, person_id)
-    return "success"
+    filename = load.upload_image(file, person_id)
+    return {"filename": filename}
 
 
 @bp.route("/fetch_data", methods=["GET"])
@@ -111,12 +116,14 @@ def render():
             locale=locale,
             group_options=config["groups"],
             role_options=config["roles"],
-            link_prefix="/api/html",
+            link_prefix="/api/html/",
             images=config["images"],
+            stylesheet="styles.css",
+            flat=False,
         )
         for key in group_pages:
             load.upload_html(key, locale, group_pages[key])
-        print(f"stored {len(group_pages)} files for locale {locale}")
+        log.info(f"stored {len(group_pages)} files for locale {locale}")
 
     return jsonify(group_pages)
 
@@ -157,17 +164,23 @@ def download_zip():
             group_options=config["groups"],
             role_options=config["roles"],
             images=config["images"],
+            flat=True,
+            stylesheet="../styles.css",
         )
         for key in group_pages:
             pages[f"{locale}/{key}.html"] = group_pages[key]
 
     with zipfile.ZipFile(memory_file, "w", zipfile.ZIP_DEFLATED) as zf:
+        # Add html pages
         for filename, html in pages.items():
-            print(os.path.join("wiw", filename))
-            zf.writestr(os.path.join("who-is-who", filename), html)
-
-        for locale in locales:
-            zf.write("api/styles.css", os.path.join("who-is-who", locale, "styles.css"))
+            zf.writestr(filename, html)
+        # Add styles.css
+        zf.write("api/styles.css", "styles.css")
+        # Add images
+        zf.write("api/static/favicon.png", "img/logo.png")
+        for _, filename in config["images"].items():
+            _, image = load.get_image(filename)
+            zf.writestr(os.path.join("img", filename), image)
 
     memory_file.seek(0)
 
