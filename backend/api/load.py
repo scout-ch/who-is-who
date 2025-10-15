@@ -1,15 +1,12 @@
 import json
 import os
-import sys
 import logging
 
 from api.app import APPNAME
 
-import openstack
 from openstack import connection
 
 log = logging.getLogger(".".join((APPNAME, "Load")))
-openstack.enable_logging(True, stream=sys.stdout)
 
 container_name = os.environ["SWIFT_CONTAINER"]
 
