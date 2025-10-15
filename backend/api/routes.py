@@ -46,7 +46,7 @@ def index():
 def get_html(locale, group_id):
     try:
         html = load.get_html(group_id, locale)
-        return html["Body"].read()
+        return html.decode()
     except Exception as e:
         return {"error": str(e)}, 404
 
@@ -59,8 +59,8 @@ def get_style(prefix):
 @bp.route("/image/<string:person_id>", methods=["GET"])
 def get_image(person_id):
     try:
-        image = load.get_image(person_id)
-        return Response(image["Body"].read(), mimetype=image["ContentType"])
+        content_type, image = load.get_image(person_id)
+        return Response(image, mimetype=content_type)
     except Exception as e:
         return {"error": str(e)}, 404
 

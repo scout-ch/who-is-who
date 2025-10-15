@@ -1,5 +1,10 @@
 from jinja2 import Environment, FileSystemLoader
 import copy
+import logging
+
+from api.app import APPNAME
+
+log = logging.getLogger(".".join((APPNAME, "Renderer")))
 
 
 def render_groups(
@@ -145,6 +150,7 @@ def _render_group(
     template_name="index.html.jinja",
 ):
 
+    log.info(f"Rendering group {group}")
     loader = FileSystemLoader(templates_folder)
     env = Environment(loader=loader)
     template = env.get_template(template_name)
