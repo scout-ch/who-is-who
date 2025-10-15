@@ -2,11 +2,17 @@
 <html lang="de">
 <head>
     <title>{{ root_name | e }} Who-Is-Who</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
 </head>
 <body>
   <div class="container">
-    <a href=/api/html/{{ locale }}/{{ root_id }}><h1>{{ root_name | e }}</h1></a>
+    <a 
+    {% if flat %}
+      href={{ root_id }}.html
+    {% else %}
+      href=/api/html/{{ locale }}/{{ root_id }}
+    {% endif %}
+    ><h1>{{ root_name | e }}</h1></a>
     <h2 class="group-name">{{ group.name[locale] | e }}</h2>
     {% if subgroups %}
       {% include "_group.html.jinja" %}
