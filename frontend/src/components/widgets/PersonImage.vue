@@ -36,9 +36,10 @@ const uploadImage = (file) => {
     .post(`/api/image-upload/${props.person_id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
-    .then((_res) => {
-      imageUrl.value = `/api/image/${props.person_id}`
-      configStore.images.push(props.person_id)
+    .then((res) => {
+      const filename = res.data.filename
+      imageUrl.value = `/api/image/${filename}`
+      configStore.images[props.person_id] = filename
     })
     .catch((err) => {
       console.error(err)
@@ -47,7 +48,7 @@ const uploadImage = (file) => {
 
 onMounted(() => {
   if (props.person_id in configStore.images) {
-    imageUrl.value = `/api/image/${props.person_id}`
+    imageUrl.value = `/api/image/${configStore.images[props.person_id]}`
   } else {
     imageUrl.value = defaultImage
   }

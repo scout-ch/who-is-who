@@ -15,7 +15,7 @@ export const useConfigStore = defineStore('config', {
       tel: {},
       email: {},
     },
-    images: [],
+    images: {},
   }),
   actions: {
     theState() {
