@@ -19,6 +19,8 @@ def render_groups(
     group_options={},
     role_options={},
     images=[],
+    stylesheet="styles.css",
+    flat=False,
 ):
     group_pages = {}
     for id in _groups_to_render(
@@ -60,6 +62,8 @@ def render_groups(
             images=images,
             link_prefix=link_prefix,
             locale=locale,
+            stylesheet=stylesheet,
+            flat=flat,
         )
 
     return group_pages
@@ -145,12 +149,13 @@ def _render_group(
     roles=[],
     locale="de",
     images=[],
+    flat=False,
     link_prefix="",
     templates_folder="templates",
     template_name="index.html.jinja",
+    stylesheet="styles.css",
 ):
 
-    log.info(f"Rendering group {group}")
     loader = FileSystemLoader(templates_folder)
     env = Environment(loader=loader)
     template = env.get_template(template_name)
@@ -163,5 +168,7 @@ def _render_group(
         "images": images,
         "link_prefix": link_prefix,
         "locale": locale,
+        "stylesheet": stylesheet,
+        "flat": flat,
     }
     return template.render(context)
