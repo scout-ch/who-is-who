@@ -17,13 +17,13 @@ COPY . /app
 ENV FLASK_ENV=development
 ENV FLASK_RUN_HOST=0.0.0.0
 
-EXPOSE 5000
+EXPOSE 3000
 
-CMD ["flask", "--app", "api/app", "run", "--debug"]
+CMD ["flask", "--app", "api/app", "run", "--debug", "--port", "3000"]
 
 FROM develop AS prod
 WORKDIR /app
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip3 install gunicorn
 ENV FLASK_ENV=production
-CMD ["gunicorn", "-b", "0.0.0.0:5000"]
+CMD ["gunicorn", "-b", "0.0.0.0:3000"]
