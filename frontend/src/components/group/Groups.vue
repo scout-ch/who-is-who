@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import Group from './Group.vue'
 import axios from 'axios'
 
+import Loading from '@/components/widgets/Loader.vue'
+
 import { useDataStore } from '@/stores/dataStore'
 
 const dataStore = useDataStore()
@@ -27,7 +29,7 @@ axios
 </script>
 
 <template>
-  <div v-if="loading"><p>Loading...</p></div>
+  <Loading v-if="loading" class="mt-30" />
   <div v-else>
     <Group :groupId="root_group" :expanded="true" />
   </div>
