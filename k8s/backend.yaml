@@ -8,8 +8,8 @@ spec:
     tier: backend
   ports:
     - protocol: TCP
-      port: 5000
-      targetPort: 5000
+      port: 3000
+      targetPort: 3000
   clusterIP: None
 ---
 apiVersion: apps/v1
@@ -41,6 +41,8 @@ spec:
               value: "https://api.pub1.infomaniak.cloud/identity/v3"
             - name: SWIFT_CONTAINER
               value: "who-is-who"
+            - name: SWIFT_REGION
+              value: "dc3-a"
             - name: MIDATA_TOKEN
               valueFrom:
                 secretKeyRef:
