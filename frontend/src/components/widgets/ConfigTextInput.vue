@@ -1,5 +1,5 @@
 <script setup>
-import { useTemplateRef } from 'vue'
+import { useTemplateRef, computed } from 'vue'
 
 const locales = ['de', 'fr', 'it']
 
@@ -10,28 +10,25 @@ const props = defineProps({
   configField: {
     type: Object,
   },
-  defaultTextDe: {
-    type: String,
-    default: '',
-  },
-  defaultTextFr: {
-    type: String,
-    default: '',
-  },
-  defaultTextIt: {
-    type: String,
-    default: '',
+  defaultValues: {
+    type: Object,
+    default: {},
   },
 })
-const defaultText = { de: props.defaultTextDe, fr: props.defaultTextFr, it: props.defaultTextIt }
+const initialValues = computed(() => {
+  return { de: '', fr: '', it: '', ...props.defaultValues }
+})
 
-const ctinput = {
-  de: useTemplateRef('ctinputde'),
-  fr: useTemplateRef('ctinputfr'),
-  it: useTemplateRef('ctinputit'),
+let inputRefs = {}
+locales.forEach((loc) => {
+  inputRefs[loc] = useTemplateRef(idByLocale(loc))
+})
+
+function idByLocale(locale) {
+  return `cti-${locale}`
 }
 
-function setText(text, locale) {
+function setConfigText(text, locale) {
   if (!(props.id in props.configField)) {
     props.configField[props.id] = {}
   }
@@ -39,20 +36,9 @@ function setText(text, locale) {
 }
 
 function reset(locale) {
-  if (!(props.id in props.configField)) {
-    return
+  if (props.id in props.configField && locale in props.configField[props.id]) {
+    delete props.configField[props.id][locale]
   }
-  if (locale) {
-    ctinput[locale].value[0].textContent = defaultText[locale]
-    props.configField[props.id][locale] = defaultText[locale]
-
-    // TODO: small optimisation: check if all entries in the configField are equal to the default text and remove the entry for the id if so
-  } //else {
-  //delete props.configField[props.id]
-  //locales.forEach((loc) => {
-
-  //})
-  //}
 }
 </script>
 
@@ -60,14 +46,18 @@ function reset(locale) {
   <div v-for="locale in locales">
     <span class="flex gap-2 m-1 items-center">
       <v-icon :name="'fi-' + locale" squared="false" />
-      <div
-        :ref="'ctinput' + locale"
-        contenteditable="true"
-        class="w-full border rounded-sm resize-none h-10 p-1 items-center text-lg flex hover:bg-gray-100"
-        @keyup="setText($event.target.textContent, locale)"
-        @keyup.enter.exact="$event.target.blur()"
-        :textContent="defaultText[locale]"
-      />
+      <div class="w-full h-10 items-center text-lg flex">
+        &nbsp;
+        <div
+          :ref="idByLocale(locale)"
+          contenteditable
+          class="w-full h-full border rounded-sm resize-none p-1 whitespace-nowrap hover:bg-gray-100"
+          @blur="setConfigText($event.target.textContent.trim(), locale)"
+          @keyup.enter.exact="$event.target.blur()"
+        >
+          {{ initialValues[locale] }}
+        </div>
+      </div>
       <v-icon name="la-undo-alt-solid" @click="reset(locale)" class="cursor-pointer" />
     </span>
   </div>

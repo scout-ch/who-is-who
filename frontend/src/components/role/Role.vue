@@ -20,34 +20,16 @@ const emit = defineEmits(['dragged', 'dropped'])
 const dataStore = useDataStore()
 const configStore = useConfigStore()
 
+// Spreading both value stores causes the second object values to overwrite the first
+const role = computed(() => loadRole())
 const person = dataStore.roles[props.roleId].person
-const role = computed(() => {
-  var result = dataStore.roles[props.roleId].name
-
-  if (props.roleId in configStore.roles.name) {
-    Object.keys(configStore.roles.name[props.roleId]).forEach((locale) => {
-      result[locale] = configStore.roles.name[props.roleId][locale]
-    })
-  }
-
-  return result
-})
 
 const include = ref(true)
-const roleEdited = ref(false)
 
 const showDetail = ref(false)
 
 function loadRole() {
-  var result = dataStore.roles[props.roleId].name
-
-  if (props.roleId in configStore.roles.name) {
-    Object.keys(configStore.roles.name[props.roleId]).forEach((locale) => {
-      result[locale] = configStore.roles.name[props.roleId][locale]
-    })
-  }
-
-  return result
+  return { ...dataStore.roles[props.roleId].name, ...configStore.roles.name[props.roleId] }
 }
 
 function excludeRole() {
@@ -102,10 +84,8 @@ function onDrop() {
         </span>
       </div>
       <div class="flex items-center">
-        <!-- Icon -->
-        <ReceiptRefundIcon v-if="roleEdited" @click="resetRole" class="w-5 mr-2 cursor-pointer" />
-        <div v-else class="w-5 mr-2" />
-
+        <!-- Icons -->
+        <div class="w-5 mr-2" />
         <div class="cursor-pointer text-green-500" v-if="include" @click="excludeRole">
           <CheckCircleIcon class="h-5 w-5 transition duration-300 hover:bg-teal-300/50" />
         </div>
@@ -114,6 +94,6 @@ function onDrop() {
         </div>
       </div>
     </span>
-    <RoleDetail v-show="showDetail" :roleId="props.roleId" :person_id="person.id" :role="role" />
+    <RoleDetail v-show="showDetail" :roleId="props.roleId" :personId="person.id" :role="role" />
   </div>
 </template>

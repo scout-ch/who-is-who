@@ -26,7 +26,7 @@ function initialPreview() {
 function fetchHtml() {
   loading.value = true
   axios
-    .get('/api/render')
+    .get('/api/render', {timeout: 180000 })
     .then((_res) => {
       loading.value = false
     })
@@ -35,24 +35,14 @@ function fetchHtml() {
     })
 }
 
-function postConfig() {
-  axios
-    .post('/api/config', {
-      data: configStore.theState(),
-    })
-    .catch((err) => {
-      console.error('Failed to post config:', err)
-    })
-}
-
 function generate() {
-  postConfig()
+  configStore.postConfig()
   setTimeout(fetchHtml, 150)
 }
 
 function downloadZip() {
   downloading.value = true
-  postConfig()
+  configStore.postConfig()
   axios
     .get('/api/download-zip', { responseType: 'blob' })
     .then((res) => {

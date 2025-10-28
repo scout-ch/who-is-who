@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue'
-import GroupDetail from '@/components/group/Detail.vue'
+
+import Attributes from '@/components/group/Attributes.vue'
+import RoleContainer from '@/components/group/RoleContainer.vue'
+
 import {
   CheckCircleIcon,
   XCircleIcon,
@@ -16,10 +19,6 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  exclude: {
-    type: Boolean,
-    default: false,
-  },
   expanded: {
     type: Boolean,
     default: false,
@@ -34,7 +33,7 @@ const dataStore = useDataStore()
 const groupId = props.groupId
 
 const expanded = ref(props.expanded)
-const exclude = ref(props.exclude)
+const exclude = ref(configStore.isGroupExcluded(groupId))
 
 const hasSubgroups =
   'subgroups' in dataStore &&
@@ -105,18 +104,32 @@ function onDrop() {
     <div class="ml-3 cursor-pointer text-green-500" v-if="!exclude" @click="excludeGroup()">
       <CheckCircleIcon class="h-5 w-5 transition duration-300 hover:bg-teal-300/50" />
     </div>
-    <div class="ml-3 cursor-pointer text-red-500" v-else="exclude" @click="includeGroup()">
+    <div class="ml-3 cursor-pointer text-red-500" v-else @click="includeGroup()">
       <XCircleIcon class="h-5 w-5 transition duration-300 hover:bg-amber-300/50" />
     </div>
   </div>
 
-  <!----- Subgroups --------------->
+  <!-- Subgroups -->
   <div v-show="expanded" v-if="hasSubgroups" class="p-2 m-1 mb-3 pr-1 border rounded-lg">
+    <Attributes :groupId="props.groupId" />
+    <!---------------->
+    <hr class="mb-2 mt-2" />
+    <!---------------->
+    <p class="font-bold">Groups</p>
+
     <div v-for="(id, index) in orderedSubgroups" :key="id">
       <Group :groupId="id" @dragged="onDragged(index)" @dropped="onDropped(index, groupId)" />
     </div>
   </div>
+  <!-- Group Detail -->
   <div v-else v-show="expanded" class="block p-2 m-1 border rounded-lg">
-    <GroupDetail :groupId="groupId" />
+    <Attributes :groupId="props.groupId" />
+
+    <!---------------->
+    <hr class="mb-2 mt-1" />
+    <!---------------->
+
+    <p class="font-bold">Roles</p>
+    <RoleContainer :groupId="groupId" />
   </div>
 </template>

@@ -12,16 +12,19 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  placeholder: {
-    type: String,
-    default: '',
-  },
 })
 
 const cinput = useTemplateRef('cinput')
 
-function setConfig(text) {
+function setInput(text) {
   props.configField[props.id] = text
+}
+
+function getInput() {
+  if (props.id in props.configField) {
+    return props.configField[props.id]
+  }
+  return ''
 }
 
 function reset() {
@@ -33,14 +36,18 @@ function reset() {
 <template>
   <span class="flex gap-2 m-1 items-center">
     <div class="text-lg">{{ props.label }}:</div>
-    <div
-      ref="cinput"
-      contenteditable="true"
-      class="w-full border rounded-sm resize-none h-10 p-1 items-center text-lg flex hover:bg-gray-100"
-      @keyup="setConfig($event.target.textContent, locale)"
-      @keyup.enter.exact="$event.target.blur()"
-      :placeholder="props.placeholder"
-    ></div>
+    <div class="w-full h-10 items-center text-lg flex">
+      &nbsp;
+      <div
+        contenteditable
+        class="w-full h-full border rounded-sm whitespace-nowrap resize-none p-1 hover:bg-gray-100"
+        ref="cinput"
+        @blur="setInput($event.target.textContent)"
+        @keyup.enter.exact.prevent="$event.target.blur()"
+      >
+        {{ getInput() }}
+      </div>
+    </div>
     <v-icon name="la-undo-alt-solid" @click="reset()" class="cursor-pointer" />
   </span>
 </template>

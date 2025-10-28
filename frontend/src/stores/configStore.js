@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import axios from 'axios'
 
 export const useConfigStore = defineStore('config', {
   state: () => ({
@@ -24,6 +25,26 @@ export const useConfigStore = defineStore('config', {
         roles: this.roles,
         images: this.images,
       }
+    },
+    loadConfig() {
+      axios.get('/api/config').then((res) => {
+        this.groups = res.data.groups
+        this.roles = res.data.roles
+        this.images = res.data.images
+      }).catch((err) => {
+        console.error('Failed to load config: ', err)
+      })
+    },
+    postConfig() {
+      axios.post('/api/config', {
+        data: this.theState(),
+      })
+        .catch((err) => {
+          console.error('Failed to post config: ', err)
+        })
+    },
+    isGroupExcluded(groupId) {
+      return this.groups.exclude.includes(groupId)
     },
     excludeGroup(groupId) {
       this.groups.exclude.push(groupId)
