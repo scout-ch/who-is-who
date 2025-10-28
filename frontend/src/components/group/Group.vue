@@ -40,7 +40,16 @@ const hasSubgroups =
   props.groupId in dataStore.subgroups &&
   dataStore.subgroups[props.groupId].length > 0
 
-var orderedSubgroups = hasSubgroups ? dataStore.subgroups[groupId] : null
+var orderedSubgroups = ref(null)
+// Load subgroups is there are any
+if (hasSubgroups) {
+  orderedSubgroups.value = [...dataStore.subgroups[props.groupId]]
+
+  // Overwrite subgroups with loaded config if it exists
+  if (props.groupId in configStore.groups.order) {
+    orderedSubgroups.value = [...configStore.groups.order[props.groupId]]
+  }
+}
 
 function excludeGroup() {
   configStore.excludeGroup(groupId)
@@ -68,9 +77,9 @@ function onDragged(index) {
 function onDropped(index, groupId) {
   if (draggingIndex === null || draggingIndex === index) return
 
-  const movedGroup = orderedSubgroups[draggingIndex]
-  orderedSubgroups.splice(draggingIndex, 1)
-  orderedSubgroups.splice(index, 0, movedGroup)
+  const movedGroup = orderedSubgroups.value[draggingIndex]
+  orderedSubgroups.value.splice(draggingIndex, 1)
+  orderedSubgroups.value.splice(index, 0, movedGroup)
   draggingIndex = null
 
   configStore.groups.order[groupId] = orderedSubgroups
