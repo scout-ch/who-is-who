@@ -1,34 +1,38 @@
 <script setup>
 import { useTemplateRef } from 'vue'
 
+import { useConfigStore } from '@/stores/configStore'
+
 const props = defineProps({
   id: {
     type: String,
   },
-  configField: {
-    type: Object,
+  configFieldName: {
+    type: String,
   },
   label: {
     type: String,
     default: '',
   },
 })
+const configStore = useConfigStore()
 
+const configField = configStore.getField(props.configFieldName)
 const cinput = useTemplateRef('cinput')
 
 function setInput(text) {
-  props.configField[props.id] = text
+  configField[props.id] = text
 }
 
 function getInput() {
-  if (props.id in props.configField) {
-    return props.configField[props.id]
+  if (props.id in configField) {
+    return configField[props.id]
   }
   return ''
 }
 
 function reset() {
-  delete props.configField[props.id]
+  delete configField[props.id]
   cinput.value.textContent = ''
 }
 </script>

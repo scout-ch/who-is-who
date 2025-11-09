@@ -6,5 +6,16 @@ export const useDataStore = defineStore('data', {
     roles: {},
     subgroups: {},
     rolesByGroups: {},
+    images: {},
   }),
+  actions: {
+    initialize(data) {
+      Object.keys(this.$state).forEach((key) => {
+        if (key in data) {
+          // deep copy
+          this.$state[key] = JSON.parse(JSON.stringify(data[key]))
+        }
+      })
+    },
+  },
 })

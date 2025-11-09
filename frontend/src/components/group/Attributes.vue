@@ -3,7 +3,6 @@ import ConfigTextInput from '@/components/widgets/ConfigTextInput.vue'
 import ExpandableRow from '@/components/widgets/ExpandableRow.vue'
 
 import { useDataStore } from '@/stores/dataStore'
-import { useConfigStore } from '@/stores/configStore'
 
 const props = defineProps({
   groupId: {
@@ -13,7 +12,6 @@ const props = defineProps({
 })
 
 const dataStore = useDataStore()
-const configStore = useConfigStore()
 </script>
 
 <template>
@@ -22,11 +20,11 @@ const configStore = useConfigStore()
   <ExpandableRow title="Name">
     <ConfigTextInput
       :id="props.groupId"
-      :configField="configStore.groups.name"
+      configFieldName="groups.name"
       :defaultValues="{ ...dataStore.groups[props.groupId].name }"
     />
   </ExpandableRow>
   <ExpandableRow title="Description">
-    <ConfigTextInput :id="props.groupId" :configField="configStore.groups.description" />
+    <ConfigTextInput :id="props.groupId" configFieldName="groups.description" />
   </ExpandableRow>
 </template>

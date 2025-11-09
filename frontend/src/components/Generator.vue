@@ -23,10 +23,10 @@ function initialPreview() {
     })
 }
 
-function fetchHtml() {
+function generateHtml() {
   loading.value = true
   axios
-    .get('/api/render', {timeout: 180000 })
+    .get('/api/render', { timeout: 180000 })
     .then((_res) => {
       loading.value = false
     })
@@ -37,7 +37,7 @@ function fetchHtml() {
 
 function generate() {
   configStore.postConfig()
-  setTimeout(fetchHtml, 150)
+  setTimeout(generateHtml, 150)
 }
 
 function downloadZip() {

@@ -20,16 +20,11 @@ Promise.all([loadData, loadConfig])
   .then(([resData, resConfig]) => {
     // Initialize data store
     const data = resData.data
-    dataStore.groups = data.groups
-    dataStore.subgroups = data.subgroups_for_groups
-    dataStore.roles = data.roles
-    dataStore.rolesByGroups = data.roles_for_groups
+    dataStore.initialize(data)
 
     // Initialize config store
     const config = resConfig.data
-    configStore.groups = config.groups
-    configStore.roles = config.roles
-    configStore.images = config.images
+    configStore.initialize(config)
 
     loading.value = false
   })

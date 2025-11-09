@@ -9,10 +9,6 @@ const props = defineProps({
   roleId: {
     type: String,
   },
-  include: {
-    type: Boolean,
-    default: true,
-  },
 })
 
 const emit = defineEmits(['dragged', 'dropped'])
@@ -24,7 +20,7 @@ const configStore = useConfigStore()
 const role = computed(() => loadRole())
 const person = dataStore.roles[props.roleId].person
 
-const include = ref(true)
+const include = ref(!configStore.isRoleExcluded(props.roleId))
 
 const showDetail = ref(false)
 
@@ -45,11 +41,11 @@ function includeRole() {
 // Dragstuff
 var belowDrag = ref(false)
 
-function onDragEnter(event) {
+function onDragEnter(_event) {
   belowDrag.value = true
 }
 
-function onDragLeave(event) {
+function onDragLeave(_event) {
   belowDrag.value = false
 }
 function onDrop() {

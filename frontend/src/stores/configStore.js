@@ -19,29 +19,34 @@ export const useConfigStore = defineStore('config', {
     images: {},
   }),
   actions: {
-    theState() {
-      return {
-        groups: this.groups,
-        roles: this.roles,
-        images: this.images,
-      }
-    },
-    loadConfig() {
-      axios.get('/api/config').then((res) => {
-        this.groups = res.data.groups
-        this.roles = res.data.roles
-        this.images = res.data.images
-      }).catch((err) => {
-        console.error('Failed to load config: ', err)
+    initialize(config) {
+      Object.keys(this.$state).forEach((key) => {
+        if (key in config) {
+          // deep copy
+          this.$state[key] = JSON.parse(JSON.stringify(config[key]))
+        }
       })
     },
     postConfig() {
-      axios.post('/api/config', {
-        data: this.theState(),
-      })
+      axios
+        .post('/api/config', {
+          data: this.$state,
+        })
         .catch((err) => {
           console.error('Failed to post config: ', err)
         })
+    },
+    getField(fieldname) {
+      // Get a reference to the field designated by fieldname.
+      // Can be something like groups.exclude
+      let field = this.$state
+      fieldname.split('.').forEach((subfield) => {
+        if (!(subfield in field)) {
+          field[subfield] = {}
+        }
+        field = field[subfield]
+      })
+      return field
     },
     isGroupExcluded(groupId) {
       return this.groups.exclude.includes(groupId)
@@ -51,6 +56,9 @@ export const useConfigStore = defineStore('config', {
     },
     includeGroup(groupId) {
       this.groups.exclude = this.groups.exclude.filter((e) => e != groupId)
+    },
+    isRoleExcluded(roleId) {
+      return this.roles.exclude.includes(roleId)
     },
     excludeRole(roleId) {
       this.roles.exclude.push(roleId)

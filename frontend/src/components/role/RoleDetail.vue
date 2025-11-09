@@ -29,12 +29,12 @@ const configStore = useConfigStore()
       <div class="w-full">
         <ConfigTextInput
           :id="props.roleId"
-          :configField="configStore.roles.name"
+          configFieldName="roles.name"
           :defaultValues="props.role"
         />
       </div>
     </div>
-    <ConfigInput :id="props.roleId" :configField="configStore.roles.tel" label="Telefon" />
-    <ConfigInput :id="props.roleId" :configField="configStore.roles.email" label="Email" />
+    <ConfigInput :id="props.roleId" configFieldName="roles.tel" label="Telefon" />
+    <ConfigInput :id="props.roleId" configFieldName="roles.email" label="Email" />
   </div>
 </template>

@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useDataStore } from '@/stores/dataStore'
 import { useConfigStore } from '@/stores/configStore'
 import axios from 'axios'
 
@@ -14,6 +15,7 @@ const previewUrl = ref(null)
 const defaultImage = '/favicon.png'
 
 const configStore = useConfigStore()
+const dataStore = useDataStore()
 
 const triggerFileInput = () => {
   fileInput.value.click()
@@ -50,7 +52,7 @@ onMounted(() => {
   if (props.person_id in configStore.images) {
     imageUrl.value = `/api/image/${configStore.images[props.person_id]}`
   } else {
-    imageUrl.value = defaultImage
+    imageUrl.value = dataStore.images[props.person_id]
   }
 })
 </script>
@@ -61,7 +63,7 @@ onMounted(() => {
       :src="imageUrl"
       alt="Click to upload"
       @click="triggerFileInput"
-      class="cursor-pointer min-w-25 max-h-25 border rounded-lg aspect-square mr-2"
+      class="cursor-pointer min-w-25 max-h-25 border rounded-lg object-cover mr-2"
     />
     <input
       type="file"

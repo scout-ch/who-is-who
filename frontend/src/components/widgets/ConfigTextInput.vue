@@ -1,20 +1,25 @@
 <script setup>
 import { useTemplateRef, computed } from 'vue'
 
+import { useConfigStore } from '@/stores/configStore'
 const locales = ['de', 'fr', 'it']
 
 const props = defineProps({
   id: {
     type: String,
   },
-  configField: {
-    type: Object,
+  configFieldName: {
+    type: String,
   },
   defaultValues: {
     type: Object,
     default: {},
   },
 })
+
+const configStore = useConfigStore()
+
+const configField = configStore.getField(props.configFieldName)
 const initialValues = computed(() => {
   return { de: '', fr: '', it: '', ...props.defaultValues }
 })
@@ -29,15 +34,15 @@ function idByLocale(locale) {
 }
 
 function setConfigText(text, locale) {
-  if (!(props.id in props.configField)) {
-    props.configField[props.id] = {}
+  if (!(props.id in configField)) {
+    configField[props.id] = {}
   }
-  props.configField[props.id][locale] = text
+  configField[props.id][locale] = text
 }
 
 function reset(locale) {
-  if (props.id in props.configField && locale in props.configField[props.id]) {
-    delete props.configField[props.id][locale]
+  if (props.id in configField && locale in configField[props.id]) {
+    delete configField[props.id][locale]
   }
 }
 </script>
