@@ -1,9 +1,12 @@
 <section class="wiw-group-data">
     {% if render_group_head %}
-        <span class="wiw-title-container"
+        <span class="wiw-title-container layer-{{ layer }}"
               onclick="toggleGroup('wiw-group-content-wrapper-{{ group_id }}')">
-            <div id="wiw-{{ group_id }}-title" class="wiw-group-title">{{ name[locale] }}</div>
-            <div id="arrow-down-{{ group_id }}">{% include "svg/arrow_down.svg" %}</div>
+            <div id="wiw-{{ group_id }}-title"
+                 class="wiw-group-title layer-{{ layer }}">{{ name[locale] }}</div>
+            {% if people %}
+                <div id="arrow-down-{{ group_id }}">{% include "svg/arrow_down.svg" %}</div>
+            {% endif %}
         </span>
     {% endif %}
     <div id="wiw-group-content-wrapper-{{ group_id }}"

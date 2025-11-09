@@ -18,11 +18,20 @@ def index():
     return jsonify(data.get())
 
 
+@bp.route("/full_html/<string:locale>/<int:group_id>", methods=["GET"])
+def get_full_html(locale, group_id):
+    try:
+        html = load.get_html(group_id, locale)
+        return "".join((renderer.html_start(), html.decode(), renderer.html_end()))
+    except Exception as e:
+        return {"error": str(e)}, 404
+
+
 @bp.route("/html/<string:locale>/<int:group_id>", methods=["GET"])
 def get_html(locale, group_id):
     try:
         html = load.get_html(group_id, locale)
-        return "".join((renderer.html_start(), html.decode(), renderer.html_end()))
+        return html.decode()
     except Exception as e:
         return {"error": str(e)}, 404
 

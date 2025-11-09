@@ -18,6 +18,8 @@ def render_group(
     group_name = data.groups()[group_id][NAME_LABEL]
     group_description = configuration.group_description(group_id)
 
+    has_subgroups = group_id in data.subgroups()
+
     context = {
         "layer": layer,
         "locale": locale,
@@ -27,14 +29,14 @@ def render_group(
         "render_group_head": render_group_head,
     }
 
-    if render_people and not group_id in data.subgroups():
+    if render_people and not has_subgroups:
         roles = configuration.roles_by_group(group_id)
         people = [configuration.person_data(role_id) for role_id in roles]
         context["people"] = people
 
     result = _render_template("group_data.html.jinja", context)
 
-    if render_subgroups and group_id in data.subgroups():
+    if render_subgroups and has_subgroups:
         return result + _render_subgroups(locale, group_id, layer)
 
     return result
@@ -42,7 +44,7 @@ def render_group(
 
 def html_start(stylesheet_link="") -> str:
     stylesheet_content = ""
-    with open("api/styles.css") as f:
+    with open("api/static/styles.css") as f:
         stylesheet_content = f.read()
 
     context = {
@@ -54,7 +56,7 @@ def html_start(stylesheet_link="") -> str:
 
 def html_end(js_link="") -> str:
     js_content = ""
-    with open("api/script.js") as f:
+    with open("api/static/script.js") as f:
         js_content = f.read()
 
     context = {"js_content": js_content, "js_link": js_link}

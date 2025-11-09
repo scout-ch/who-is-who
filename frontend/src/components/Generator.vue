@@ -10,7 +10,7 @@ const configStore = useConfigStore()
 const loading = ref(true)
 const downloading = ref(false)
 
-const root_group_url = '/api/html/de/2'
+const root_group_url = '/api/full_html/de/2'
 
 function initialPreview() {
   axios

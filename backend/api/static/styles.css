@@ -24,12 +24,20 @@ body {
   align-items: center;
 }
 
+.wiw-title-container.layer-2 {
+  cursor: unset;
+}
+
 .wiw-group-title {
   font-weight: 300;
   color: var(--color-red-font);
   padding: 0.35em 27px 0.45em 0;
   font-size: 23px;
   display: block;
+}
+
+.wiw-group-title.layer-2 {
+  font-size: 30px;
 }
 
 .wiw-group-description {
