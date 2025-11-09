@@ -1,8 +1,5 @@
-FROM python:3.13.7-slim AS develop
+FROM python:3.13.9 AS develop
 
-# User configuration
-#RUN useradd -ms /bin/sh -u 1001 app
-#USER app
 WORKDIR /app
 
 # Dependencies
@@ -11,7 +8,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     pip3 install -r requirements.txt
 
 # Copy source files
-#COPY --chown=app:app . /app
 COPY . /app
 
 ENV FLASK_ENV=development
