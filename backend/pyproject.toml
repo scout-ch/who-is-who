@@ -1,0 +1,11 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Who-Is-Who Backend used for loading, transforming and rendering MiData group data"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+[tool.jinja-lsp]
+templates = "./templates"
+backend = ["./api"]

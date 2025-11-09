@@ -1,0 +1,26 @@
+<div id="wiw-role-{{ person.role_id }}" class="wiw-person-container">
+    <div class="wiw-person-image">
+        {% if person.image %}
+            <img class="wiw-profile-picture" alt="" src="{{ person.image }}" title="">
+        {% else %}
+            <img class="wiw-profile-picture" src="/api/static/favicon.png">
+        {% endif %}
+    </div>
+    <p class="wiw-profile-text">
+        <strong>{{ person.person_name }}</strong>
+        <br>
+        <br>
+        {{ person.role_name[locale] }}
+        <br>
+        <br>
+    </p>
+    <span class="wiw-person-attrs-container">
+        <p class="wiw-person-attrs">
+            {% if person.role_emails %}
+                Email: {{ person.role_emails | replace('@', '-at-') }}
+                <br>
+            {% endif %}
+            {% if person.role_tel %}Tel.: {{ person.role_tel }}{% endif %}
+        </p>
+    </span>
+</div>

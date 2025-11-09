@@ -1,10 +1,10 @@
 import json
-import os
 import logging
-
-from api.app import APPNAME
+import os
 
 from openstack import connection
+
+from api.app import APPNAME
 
 log = logging.getLogger(".".join((APPNAME, "Load")))
 

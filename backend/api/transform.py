@@ -1,23 +1,25 @@
 from collections import defaultdict
 
+import api.extract as extract
+
 
 def t(groups, roles, people):
     groups_by_id = {str(group["id"]): _transform_group(group) for group in groups}
     people_by_id = {str(person["id"]): person for person in people}
     roles_by_id = {
-        str(role["id"]): _transform_role(
+        role_id: _transform_role(
             role, people_by_id[str(role["attributes"]["person_id"])]
         )
-        for role in roles
+        for role_id, role in roles.items()
         if str(role["attributes"]["person_id"]) in people_by_id
     }
-
+    images = {person["id"]: person["attributes"]["picture"] for person in people}
     subgroups_for_groups = _subgroups(groups)
     roles_for_groups = _roles_for_groups(roles, people_by_id)
 
     _clear_empty_groups(groups_by_id, subgroups_for_groups, roles_for_groups)
 
-    return groups_by_id, subgroups_for_groups, roles_by_id, roles_for_groups
+    return groups_by_id, subgroups_for_groups, roles_by_id, roles_for_groups, images
 
 
 def _transform_group(group):
@@ -37,14 +39,16 @@ def _transform_group(group):
 
 
 def _transform_role(role, person):
-    # TODO: change as soon as human readable locale based roles are introduced to the JSON API
-    name = role["attributes"]["type"].split(":")[-1]
     person_id = person["id"]
     person = person["attributes"]
+
     return {
         "id": role["id"],
-        "name": {"de": name, "fr": name, "it": name},
-        "type": role["attributes"]["type"],
+        "name": {
+            locale: role["attributes"]["name"][locale]
+            for locale in extract.LOCALES
+            if locale in role["attributes"]["name"]
+        },
         "person": {
             "id": person_id,
             "firstname": person["first_name"],
@@ -67,8 +71,8 @@ def _subgroups(groups):
 def _roles_for_groups(roles, people_by_id):
     roles_for_groups = defaultdict(list)
 
-    role_ids = set([r["id"] for r in roles])
-    for role in roles:
+    role_ids = set(roles.keys())
+    for role_id, role in roles.items():
         person_id = str(role["attributes"]["person_id"])
         group_id = str(role["attributes"]["group_id"])
         role_id = str(role["id"])

@@ -1,174 +1,78 @@
 from jinja2 import Environment, FileSystemLoader
-import copy
-import logging
 
-from api.app import APPNAME
+from api import configuration, data
 
-log = logging.getLogger(".".join((APPNAME, "Renderer")))
+TEMPLATE_FOLDER = "templates"
 
-
-def render_groups(
-    groups_by_id,
-    roles_by_id,
-    subgroups_for_groups,
-    roles_for_groups,
-    root_name="",
-    root_id=0,
-    locale="de",
-    link_prefix="",
-    group_options={},
-    role_options={},
-    images=[],
-    stylesheet="styles.css",
-    flat=False,
-):
-    group_pages = {}
-    for id in _groups_to_render(
-        str(root_id), subgroups_for_groups, group_options["exclude"]
-    ):
-        if id in group_options["exclude"]:
-            continue
-
-        subgroups = []
-        roles = []
-
-        if id in subgroups_for_groups:
-            subgroups = [
-                _group_data(groups_by_id[subgroup_id], group_options)
-                for subgroup_id in subgroups_for_groups[id]
-                if subgroup_id in groups_by_id
-                and not subgroup_id in group_options["exclude"]
-            ]
-
-            if id in group_options["order"]:
-                subgroups = _sort_by_order(subgroups, group_options["order"][id])
-
-        elif id in roles_for_groups:
-            roles = [
-                _role_data(roles_by_id[role_id], role_options)
-                for role_id in roles_for_groups[id]
-                if role_id in roles_by_id and not role_id in role_options["exclude"]
-            ]
-
-            if id in role_options["order"]:
-                roles = _sort_by_order(roles, role_options["order"][id])
-
-        group_pages[id] = _render_group(
-            root_name=root_name,
-            root_id=root_id,
-            group=_group_data(groups_by_id[id], group_options),
-            subgroups=subgroups,
-            roles=roles,
-            images=images,
-            link_prefix=link_prefix,
-            locale=locale,
-            stylesheet=stylesheet,
-            flat=flat,
-        )
-
-    return group_pages
+NAME_LABEL = "name"
 
 
-def _groups_to_render(root_group: int, subgroups_for_groups: {}, to_exclude=[]):
-    groups_to_process = copy.deepcopy(subgroups_for_groups[root_group])
-    result = [root_group]
-    while groups_to_process:
-        current_group = groups_to_process.pop()
-        if current_group in to_exclude:
-            continue
+def render_group(
+    locale: str,
+    group_id: str,
+    layer: int = 1,
+    render_group_head=True,
+    render_subgroups=True,
+    render_people=True,
+) -> str:
+    group_name = data.groups()[group_id][NAME_LABEL]
+    group_description = configuration.group_description(group_id)
 
-        result.append(current_group)
-        if current_group in subgroups_for_groups:
-            groups_to_process.extend(subgroups_for_groups[current_group])
-    return result
+    context = {
+        "layer": layer,
+        "locale": locale,
+        "group_id": group_id,
+        "name": group_name,
+        "description": group_description,
+        "render_group_head": render_group_head,
+    }
 
+    if render_people and not group_id in data.subgroups():
+        roles = configuration.roles_by_group(group_id)
+        people = [configuration.person_data(role_id) for role_id in roles]
+        context["people"] = people
 
-def _sort_by_order(data, order):
-    if any(entry["id"] not in order for entry in data):
-        return data
+    result = _render_template("group_data.html.jinja", context)
 
-    return sorted(data, key=lambda entry: order.index(entry["id"]))
-
-
-def _root(name, group_id):
-    return {"name": name, "group_id": group_id}
-
-
-def _option_overwrite(data, options, id, label):
-    if label not in data or label not in options or id not in options[label]:
-        return data
-
-    for locale, value in options[label][id].items():
-        data[label][locale] = value
-
-
-def _group_data(group, group_options):
-    id = group["id"]
-    result = copy.deepcopy(group)
-
-    _option_overwrite(result, group_options, id, "description")
-    _option_overwrite(result, group_options, id, "name")
+    if render_subgroups and group_id in data.subgroups():
+        return result + _render_subgroups(locale, group_id, layer)
 
     return result
 
 
-def _role_data(role, role_options):
-    # Structure should be like:
-    #    {
-    #        "name": {
-    #            "de": role_name,
-    #            "fr": role_name,
-    #            "it": role_name,
-    #         },
-    #        "type": role_type,
-    #        "person": {
-    #            "firstname": first_name,
-    #            "lastname": last_name,
-    #            "nickname": nickname,
-    #        },
-    #    }
-    id = role["id"]
-    result = copy.deepcopy(role)
+def html_start(stylesheet_link="") -> str:
+    stylesheet_content = ""
+    with open("api/styles.css") as f:
+        stylesheet_content = f.read()
 
-    _option_overwrite(result, role_options, id, "name")
-
-    if id in role_options["tel"]:
-        result["tel"] = role_options["tel"][id]
-
-    if id in role_options["email"]:
-        result["email"] = role_options["email"][id]
-
-    return result
+    context = {
+        "stylesheet_link": stylesheet_link,
+        "stylesheet_content": stylesheet_content,
+    }
+    return _render_template("html_start.html.jinja", context)
 
 
-def _render_group(
-    root_name,
-    root_id,
-    group,
-    subgroups=[],
-    roles=[],
-    locale="de",
-    images=[],
-    flat=False,
-    link_prefix="",
-    templates_folder="templates",
-    template_name="index.html.jinja",
-    stylesheet="styles.css",
-):
+def html_end(js_link="") -> str:
+    js_content = ""
+    with open("api/script.js") as f:
+        js_content = f.read()
 
-    loader = FileSystemLoader(templates_folder)
+    context = {"js_content": js_content, "js_link": js_link}
+    return _render_template("html_end.html.jinja", context)
+
+
+def _render_subgroups(locale: str, group_id: str, layer: int) -> str:
+    return "".join(
+        [
+            render_group(locale, subgroup, layer + 1)
+            for subgroup in configuration.subgroups(group_id)
+        ]
+    )
+
+
+def _render_template(template_name, context) -> str:
+    loader = FileSystemLoader(TEMPLATE_FOLDER)
     env = Environment(loader=loader)
     template = env.get_template(template_name)
-    context = {
-        "root_name": root_name,
-        "root_id": root_id,
-        "group": group,
-        "subgroups": subgroups,
-        "roles": roles,
-        "images": images,
-        "link_prefix": link_prefix,
-        "locale": locale,
-        "stylesheet": stylesheet,
-        "flat": flat,
-    }
+
     return template.render(context)

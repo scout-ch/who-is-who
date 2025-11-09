@@ -1,21 +1,27 @@
-import requests as re
+import logging
 import math
 import os
-import logging
+from copy import deepcopy
+from pickle import TRUE
+
+import requests as re
+from flask import g
 
 from api.app import APPNAME
 
 TOKEN = os.environ.get("MIDATA_TOKEN")
 SCOUT_URL = os.environ.get("SCOUT_URL")
 
+LOCALES = ["de", "it", "fr"]
 API_URL = f"{SCOUT_URL}/api" if SCOUT_URL else "/api"
 HEADERS = {
     "X-Token": TOKEN,
     "accept": "*//",
     "Content-Type": "application/vnd.api+json",
 }
-GROUPS_FIELDS = ["id", "name"]
-PEOPLE_FIELDS = ["first_name", "last_name", "nick_name"]
+GROUPS_FIELDS = ["name", "display_name", "description", "parent_id"]
+PEOPLE_FIELDS = ["id", "first_name", "last_name", "nickname", "picture"]
+ROLE_FIELDS = ["id", "person_id", "group_id", "name"]
 MAX_ID_FETCH = 600
 
 log = logging.getLogger(".".join((APPNAME, "Extract")))
@@ -45,7 +51,7 @@ def api_fetch_organisation_data(org_id):
     roles = fetch_roles_in_groups(group_ids)
 
     # 3. fetch all people belonging to any fetched roles
-    people_ids = [role["attributes"]["person_id"] for role in roles]
+    people_ids = [role["attributes"]["person_id"] for _, role in roles.items()]
 
     # Ensure the URL string won't be too long and trigger an 414
     # Splits the API call into n = #ids / MAX_ID_FETCH calls.
@@ -73,7 +79,7 @@ def fetch_children_groups(group_ids, layer_group_id=None):
         group_ids = [group_ids]
 
     filter = {"parent_id": ",".join(group_ids)}
-    fields = {"groups": ["name", "display_name", "description", "parent_id"]}
+    fields = {"groups": GROUPS_FIELDS}
     if layer_group_id:
         filter["layer_group_id"] = layer_group_id
     return api_load_all(endpoint="groups", fields=fields, filter=filter)
@@ -89,11 +95,31 @@ def fetch_roles_in_groups(group_ids):
     elif isinstance(group_ids, int):
         group_ids = str(group_ids)
 
-    return api_load_all(
-        endpoint="roles",
-        fields={"roles": ["id", "person_id", "group_id", "type"]},
-        filter={"group_id": group_ids},
-    )
+    result = {}
+
+    # Load all roles
+    # Roles have different text depending on the locale.
+    for locale in LOCALES:
+        roles = api_load_all(
+            endpoint="roles",
+            locale=locale,
+            fields={"roles": ROLE_FIELDS},  # Only load the translated name field
+            filter={"group_id": group_ids},
+        )
+
+        roles = {role["id"]: role for role in roles}
+        for role_id, role in roles.items():
+            if not role_id in result:
+                result[role_id] = deepcopy(role)
+                result[role_id]["attributes"]["name"] = {}
+
+            result[role_id]["attributes"]["name"][locale] = role["attributes"]["name"]
+
+    return result
+
+
+def _name_by_id(roles) -> dict:
+    return {role["id"]: role["attributes"]["name"] for role in roles}
 
 
 def fetch_people(ids):
@@ -101,7 +127,7 @@ def fetch_people(ids):
 
     return api_load_all(
         endpoint="people",
-        fields={"people": ["id", "first_name", "last_name", "nickname"]},
+        fields={"people": PEOPLE_FIELDS},
         filter={"id": ids},
     )
 
@@ -160,6 +186,7 @@ def _get(url, params):
 
 def _get_all_pages(url, params):
     response = re.get(url, headers=HEADERS, params=params)
+
     if not _response_ok(response) or not _has_data(response):
         return []
 
@@ -174,6 +201,6 @@ def _get_all_pages(url, params):
 
         res = res.json()
 
-        data.extend(res["data"])
+        data.extend(list(res["data"]))
 
     return data
