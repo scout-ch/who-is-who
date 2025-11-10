@@ -24,10 +24,6 @@ body {
   align-items: center;
 }
 
-.wiw-title-container.layer-2 {
-  cursor: unset;
-}
-
 .wiw-group-title {
   font-weight: 300;
   color: var(--color-red-font);
@@ -37,6 +33,7 @@ body {
 }
 
 .wiw-group-title.layer-2 {
+  margin-top: 10px;
   font-size: 30px;
 }
 

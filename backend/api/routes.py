@@ -73,9 +73,7 @@ def render():
     for locale in ["de", "fr", "it"]:
         page = renderer.render_group(
             locale=locale,
-            group_id=str(data.ROOT_GROUP),
-            layer=1,
-            render_group_head=False,
+            root_id=str(data.ROOT_GROUP),
         )
         load.upload_html(str(data.ROOT_GROUP), locale, page)
 

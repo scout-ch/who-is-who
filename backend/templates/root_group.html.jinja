@@ -1,0 +1,13 @@
+<section class="wiw-group-data">
+    {% if render_root %}
+        {% with id=root_id %}
+            {% include "_group.html.jinja" %}
+        {% endwith %}
+    {% else %}
+        {% for subgroup in groups[root_id].subgroups %}
+            {% with id=subgroup %}
+                {% include "_group.html.jinja" %}
+            {% endwith %}
+        {% endfor %}
+    {% endif %}
+</section>

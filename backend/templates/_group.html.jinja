@@ -1,0 +1,25 @@
+<div class="wiw-group-data">
+    <span class="wiw-title-container layer-{{ layers[id] }}"
+          onclick="toggleGroup('wiw-group-content-wrapper-{{ id }}')">
+        <div id="wiw-{{ id }}-title"
+             class="wiw-group-title layer-{{ layers[id] }}">{{ groups[id].name[locale] }}</div>
+        <div id="arrow-down-{{ id }}">{% include "svg/arrow_down.svg" %}</div>
+    </span>
+</div>
+<div id="wiw-group-content-wrapper-{{ id }}"
+     class="wiw-group-content-wrapper">
+    <div class="wiw-group-content">
+        {% if render_group_head %}
+            <div id="wiw-{{ id }}-description" class="wiw-group-description">{{ groups[id].description[locale] }}</div>
+        {% endif %}
+        {% if render_subgroups and groups[id].subgroups %}
+            {% for subgroup in groups[id].subgroups %}
+                {% with id=subgroup %}
+                    {% include "_group.html.jinja" %}
+                {% endwith %}
+            {% endfor %}
+        {% elif render_people and groups[id].people %}
+            {% include "_people.html.jinja" %}
+        {% endif %}
+    </div>
+</div>
