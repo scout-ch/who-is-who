@@ -48,23 +48,42 @@ const uploadImage = (file) => {
     })
 }
 
-onMounted(() => {
+const reset = () => {
+  if (props.person_id in configStore.images) {
+    delete configStore.images[props.person_id]
+  }
+  setImage()
+}
+
+const setImage = () => {
   if (props.person_id in configStore.images) {
     imageUrl.value = `/api/image/${configStore.images[props.person_id]}`
   } else {
     imageUrl.value = dataStore.images[props.person_id]
   }
+}
+
+onMounted(() => {
+  setImage()
 })
 </script>
 
 <template>
   <div>
-    <img
-      :src="imageUrl"
-      alt="Click to upload"
-      @click="triggerFileInput"
-      class="cursor-pointer min-w-25 max-h-25 border rounded-lg object-cover mr-2"
-    />
+    <img :src="imageUrl" alt="Person Image" class="min-w-30 max-h-30 rounded-b-xl object-cover" />
+    <span class="flex w-full h-2/7 justify-between pl-3 pr-2 pb-2">
+      <v-icon
+        name="bi-upload"
+        class="cursor-pointer w-auto h-auto hover:bg-gray-100"
+        @click="triggerFileInput"
+      />
+      <v-icon
+        name="la-undo-alt-solid"
+        class="cursor-pointer w-auto h-auto hover:bg-gray-100"
+        @click="reset()"
+      />
+    </span>
+
     <input
       type="file"
       ref="fileInput"

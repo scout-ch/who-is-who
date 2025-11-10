@@ -25,7 +25,7 @@ const configStore = useConfigStore()
 <template>
   <div>
     <div class="w-full flex p-1 text-xl justify-between select-none rounded-md">
-      <PersonImage :person_id="props.personId" />
+      <PersonImage :person_id="props.personId" class="mb-3 mr-2 pb-2 border" />
       <div class="w-full">
         <ConfigTextInput
           :id="props.roleId"
