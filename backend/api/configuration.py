@@ -15,6 +15,9 @@ ORDER_LABEL = "order"
 EMAIL_LABEL = "email"
 TEL_LABEL = "tel"
 IMAGES_LABEL = "images"
+IMAGE_PREFIX_LABEL = "image_prefix"
+
+DEFAULT_IMAGE_PREFIX = "/api/image/"
 
 
 def get():
@@ -36,6 +39,7 @@ def get():
                     EMAIL_LABEL: {},
                 },
                 IMAGES_LABEL: {},
+                IMAGE_PREFIX_LABEL: DEFAULT_IMAGE_PREFIX,
             }
             load.store_to_json(config, CONFIG_FILE)
             g.configuration = config
@@ -143,8 +147,14 @@ def image(role_id: str) -> str:
     images = get()[IMAGES_LABEL]
     person_id = data.person_id(role_id)
     if person_id in images:
-        return images[person_id]
+        return image_prefix() + images[person_id]
     return data.image(role_id)
+
+
+def image_prefix():
+    if IMAGE_PREFIX_LABEL in g:
+        return g.get(IMAGE_PREFIX_LABEL)
+    return DEFAULT_IMAGE_PREFIX
 
 
 def images() -> list[str]:

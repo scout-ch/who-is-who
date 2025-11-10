@@ -1,7 +1,9 @@
 <div id="wiw-role-{{ person.role_id }}" class="wiw-person-container">
     <div class="wiw-person-image">
         {% if person.image %}
-            <img class="wiw-profile-picture" alt="" src="{{ person.image }}" title="">
+            <img class="wiw-profile-picture"
+                 alt="profile picture of {{ person.person_name }}"
+                 src="{{ person.image }}">
         {% else %}
             <img class="wiw-profile-picture" src="/api/static/favicon.png">
         {% endif %}
