@@ -17,6 +17,7 @@ export const useConfigStore = defineStore('config', {
       email: {},
     },
     images: {},
+    imagePrefix: '',
   }),
   actions: {
     initialize(config) {

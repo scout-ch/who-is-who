@@ -17,22 +17,32 @@ const props = defineProps({
 })
 const configStore = useConfigStore()
 
-const configField = configStore.getField(props.configFieldName)
+let configField = configStore.getField(props.configFieldName)
 const cinput = useTemplateRef('cinput')
 
 function setInput(text) {
-  configField[props.id] = text
+  if (props.id) {
+    configField[props.id] = text
+  } else {
+    configField = text
+  }
 }
 
 function getInput() {
-  if (props.id in configField) {
+  if (props.id == undefined) {
+    return configField
+  } else if (props.id in configField) {
     return configField[props.id]
   }
   return ''
 }
 
 function reset() {
-  delete configField[props.id]
+  if (props.id) {
+    delete configField[props.id]
+  } else {
+    configField = ''
+  }
   cinput.value.textContent = ''
 }
 </script>

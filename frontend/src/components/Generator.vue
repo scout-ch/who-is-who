@@ -8,7 +8,7 @@ import { useConfigStore } from '@/stores/configStore'
 const configStore = useConfigStore()
 
 const loading = ref(true)
-const downloading = ref(false)
+const server_ready = ref(false)
 
 const root_group_url = '/api/full_html/de/2'
 
@@ -17,9 +17,11 @@ function initialPreview() {
     .get(root_group_url)
     .then((_res) => {
       loading.value = false
+      server_ready.value = true
     })
-    .catch((err) => {
-      console.log(`Server not ready or site not generated: ${err}`)
+    .catch((_err) => {
+      loading.value = false
+      server_ready.value = false
     })
 }
 
@@ -40,29 +42,6 @@ function generate() {
   setTimeout(generateHtml, 150)
 }
 
-function downloadZip() {
-  downloading.value = true
-  configStore.postConfig()
-  axios
-    .get('/api/download-zip', { responseType: 'blob' })
-    .then((res) => {
-      const fileUrl = window.URL.createObjectURL(res.data)
-      const fileName = res.headers['content-disposition'].match(/filename=(.+)/)[1]
-      const link = document.createElement('a')
-      link.href = fileUrl
-      link.download = fileName
-
-      document.body.appendChild(link)
-      downloading.value = false
-      link.click()
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(fileUrl)
-    })
-    .catch((err) => {
-      console.log(`Download failed: ${err}`)
-    })
-}
-
 onMounted(() => {
   initialPreview()
 })
@@ -77,23 +56,23 @@ onMounted(() => {
           <PlayIcon class="w-7 pt-1 justify-start cursor-pointer" />
         </span>
       </a>
-      <span class="flex">
-        <Loading v-if="downloading" />
-        <a v-else href="#" @click.prevent="downloadZip">
-          <span class="flex align-middle justify-center pt-2">
-            <p class="w-full h-full mt-1">Download</p>
-            <ArrowDownIcon class="w-7 pt-1 justify-end cursor-pointer" />
-          </span>
-        </a>
-      </span>
     </span>
     <Loading v-if="loading" class="mt-10" />
     <div v-else>
-      <iframe
-        class="w-full max-w-1/1 resize overflow-auto border rounded-lg m-0"
-        height="700"
-        :src="root_group_url"
-      />
+      <div v-if="server_ready">
+        <iframe
+          class="w-full max-w-1/1 resize overflow-auto border rounded-lg m-0"
+          height="1200"
+          :src="root_group_url"
+        />
+      </div>
+      <div
+        v-else
+        class="text-lg border m-5 p-5 w-1/2 bg-rose-200 text-rose-950 border-rose-400 rounded-2xl"
+      >
+        Loading preview failed.<br />
+        Has the site been generated and is the server ready?
+      </div>
     </div>
   </div>
 </template>

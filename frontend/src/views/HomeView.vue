@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
+import ConfigInput from '@/components/widgets/ConfigInput.vue'
 import Groups from '@/components/group/Groups.vue'
 import Generator from '@/components/Generator.vue'
 import Loading from '@/components/widgets/Loader.vue'
