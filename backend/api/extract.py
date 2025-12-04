@@ -9,11 +9,11 @@ from flask import g
 
 from api.app import APPNAME
 
-TOKEN = os.environ.get("MIDATA_TOKEN")
-SCOUT_URL = os.environ.get("SCOUT_URL")
+TOKEN = os.environ.get("HITOBITO_TOKEN")
+URL = os.environ.get("HITOBITO_URL")
 
 LOCALES = ["de", "it", "fr"]
-API_URL = f"{SCOUT_URL}/api" if SCOUT_URL else "/api"
+API_URL = f"{URL}/api" if URL else "/api"
 HEADERS = {
     "X-Token": TOKEN,
     "accept": "*//",
@@ -194,7 +194,7 @@ def _get_all_pages(url, params):
     data = list(res["data"])
 
     while "next" in res["links"] and not res["links"]["self"] == res["links"]["last"]:
-        res = re.get(SCOUT_URL + res["links"]["next"], headers=HEADERS)
+        res = re.get(URL + res["links"]["next"], headers=HEADERS)
 
         if not _response_ok(response) or not _has_data(response):
             return data

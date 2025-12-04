@@ -15,7 +15,7 @@ ORDER_LABEL = "order"
 EMAIL_LABEL = "email"
 TEL_LABEL = "tel"
 IMAGES_LABEL = "images"
-IMAGE_PREFIX_LABEL = "image_prefix"
+IMAGE_PREFIX_LABEL = "imagePrefix"
 
 DEFAULT_IMAGE_PREFIX = "/api/image/"
 
