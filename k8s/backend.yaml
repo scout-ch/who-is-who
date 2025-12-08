@@ -33,7 +33,7 @@ spec:
           ports:
             - containerPort: 5000
           env:
-            - name: SCOUT_URL
+            - name: HITOBITO_URL
               value: "https://db.scout.ch"
             - name: SWIFT_PROJECT
               value: "PCP-8YSS2UM"
@@ -43,11 +43,11 @@ spec:
               value: "who-is-who"
             - name: SWIFT_REGION
               value: "dc3-a"
-            - name: MIDATA_TOKEN
+            - name: HITOBITO_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: backend-secret
-                  key: SECRET_TOKEN
+                  key: HITOBITO_TOKEN
             - name: SWIFT_USERNAME
               valueFrom:
                 secretKeyRef:
