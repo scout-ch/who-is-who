@@ -7,8 +7,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      MIDATA_TOKEN: ${MIDATA_TOKEN}
-      SCOUT_URL: ${SCOUT_URL}
+      HITOBITO_TOKEN: ${HITOBITO_TOKEN}
+      HITOBITO_URL: ${HITOBITO_URL}
       SWIFT_AUTH_URL: ${SWIFT_AUTH_URL:-http://swift:5000/v3} # Needs to use the internal network service name
       SWIFT_USERNAME: ${SWIFT_USERNAME:-swift}
       SWIFT_PASSWORD: ${SWIFT_PASSWORD:-veryfast}
