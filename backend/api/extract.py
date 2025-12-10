@@ -118,10 +118,6 @@ def fetch_roles_in_groups(group_ids):
     return result
 
 
-def _name_by_id(roles) -> dict:
-    return {role["id"]: role["attributes"]["name"] for role in roles}
-
-
 def fetch_people(ids):
     ids = str(ids)[1:-1].replace(" ", "")
 

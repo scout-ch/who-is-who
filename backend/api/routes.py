@@ -5,7 +5,7 @@ from io import BytesIO
 
 from flask import Blueprint, Response, jsonify, redirect, request, send_file
 
-from api import configuration, data, extract, load, renderer
+from api import configuration, data, load, renderer
 from api.app import APPNAME
 
 log = logging.getLogger(".".join((APPNAME, "Renderer")))
@@ -13,9 +13,14 @@ log = logging.getLogger(".".join((APPNAME, "Renderer")))
 bp = Blueprint("/", __name__)
 
 
+ROOT_GROUP = str(
+    os.environ.get("ROOT_GROUP") if os.environ.get("ROOT_GROUP") else "0"
+)  # PBS Midata Group ID
+
+
 @bp.route("/", methods=["GET"])
 def index():
-    return jsonify(data.get())
+    return jsonify(data.get(ROOT_GROUP))
 
 
 @bp.route("/full_html/<string:locale>/<int:group_id>", methods=["GET"])
@@ -41,8 +46,12 @@ def get_style(_prefix):
     return send_file("styles.css")
 
 
-@bp.route("/image/<string:person_id>", methods=["GET"])
+@bp.route("/image/<string:person_id>", methods=["GET", "POST"])
 def get_image(person_id):
+    if request.method == "POST":
+        file = request.files["image"]
+        filename = load.upload_image(file, person_id)
+        return {"filename": filename}
     try:
         obj, image = load.get_image(person_id)
         return Response(image, mimetype=obj.content_type)
@@ -55,16 +64,9 @@ def get_static(p):
     return redirect(f"/static/{p}")
 
 
-@bp.route("/image-upload/<string:person_id>", methods=["POST"])
-def image_upload(person_id):
-    file = request.files["image"]
-    filename = load.upload_image(file, person_id)
-    return {"filename": filename}
-
-
-@bp.route("/fetch_data", methods=["GET"])
+@bp.route("/fetch-data", methods=["GET"])
 def fetch_data():
-    data.fetch_and_store()
+    data.fetch_and_store(ROOT_GROUP)
     return Response(status=200)
 
 
@@ -73,9 +75,9 @@ def render():
     for locale in ["de", "fr", "it"]:
         page = renderer.render_group(
             locale=locale,
-            root_id=str(data.ROOT_GROUP),
+            root_id=str(ROOT_GROUP),
         )
-        load.upload_html(str(data.ROOT_GROUP), locale, page)
+        load.upload_html(str(ROOT_GROUP), locale, page)
 
     return Response(status=200)
 
@@ -94,7 +96,7 @@ def config():
 def download_zip():
     memory_file = BytesIO()
 
-    group_id = str(data.ROOT_GROUP)
+    group_id = str(ROOT_GROUP)
     pages = {}
     locales = ["de", "fr", "it"]
     pages = {

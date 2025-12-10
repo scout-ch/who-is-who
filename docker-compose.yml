@@ -15,6 +15,7 @@ services:
       SWIFT_PROJECT: ${SWIFT_PROJECT:-service}
       SWIFT_CONTAINER: ${SWIFT_CONTAINER:-example-container}
       SWIFT_REGION: ${SWIFT_REGION:-RegionOne}
+      ROOT_GROUP: 2
     depends_on:
       swift:
         condition: service_healthy

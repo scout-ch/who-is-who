@@ -22,13 +22,11 @@ LASTNAME_LABEL = "lastname"
 NICKNAME_LABEL = "nickname"
 ID_LABEL = "id"
 
-ROOT_GROUP = 2  # PBS Midata Group ID
-
 DEFAULT_IMAGE = "default_image"
 
 
-def fetch_and_store():
-    groups, roles, people = extract.api_fetch_organisation_data(ROOT_GROUP)
+def fetch_and_store(root_group: str):
+    groups, roles, people = extract.api_fetch_organisation_data(root_group)
     groups_by_id, subgroups_for_groups, roles_by_id, roles_for_groups, images = (
         transform.t(groups, roles, people)
     )
@@ -44,11 +42,13 @@ def fetch_and_store():
     return transformed_data
 
 
-def get():
+def get(root_group="-1"):
+    if root_group != "-1":
+        g.root_group = root_group
     if "data" not in g:
         if not os.path.isfile(DATA_FILE):
             # Not the bestest solution, can be replaced with actual if there's time
-            g.data = fetch_and_store()
+            g.data = fetch_and_store(g.root_group)
         else:
             g.data = load.read_json(DATA_FILE)
     return g.data

@@ -35,13 +35,14 @@ const uploadImage = (file) => {
   formData.append('image', file)
 
   axios
-    .post(`/api/image-upload/${props.person_id}`, formData, {
+    .post(`/api/image/${props.person_id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .then((res) => {
-      const filename = res.data.filename
-      imageUrl.value = `/api/image/${filename}`
-      configStore.images[props.person_id] = filename
+      if (res.status < 400) {
+        imageUrl.value = `/api/image/${props.person_id}`
+        configStore.images[props.person_id] = props.person_id
+      }
     })
     .catch((err) => {
       console.error(err)
