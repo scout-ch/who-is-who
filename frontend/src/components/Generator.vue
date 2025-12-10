@@ -31,6 +31,7 @@ function generateHtml() {
     .get('/api/render', { timeout: 180000 })
     .then((_res) => {
       loading.value = false
+      server_ready.value = true
     })
     .catch(function (err) {
       console.error('Failed to render:', err)
@@ -70,8 +71,7 @@ onMounted(() => {
         v-else
         class="text-lg border m-5 p-5 w-1/2 bg-rose-200 text-rose-950 border-rose-400 rounded-2xl"
       >
-        Loading preview failed.<br />
-        Has the site been generated and is the server ready?
+        Loading preview failed<br />
       </div>
     </div>
   </div>
