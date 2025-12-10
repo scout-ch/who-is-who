@@ -66,8 +66,11 @@ def get_static(p):
 
 @bp.route("/fetch-data", methods=["GET"])
 def fetch_data():
-    data.fetch_and_store(ROOT_GROUP)
-    return Response(status=200)
+    try:
+        data.fetch_and_store(ROOT_GROUP)
+        return Response(status=200)
+    except Exception as e:
+        return {"error": str(e)}, 500
 
 
 @bp.route("/render", methods=["GET"])
