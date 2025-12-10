@@ -24,17 +24,17 @@ The docker-compose file creates a local frontend, backend and swift container.
 
 To create a local swift container, an adjusted copy of the [docker-keystone-swift](https://github.com/CSCfi/docker-keystone-swift) repository is needed.
 
-1. `cd ..; git git@github.com:CSCfi/docker-keystone-swift.git`
+1. `cd ..; git clone git@github.com:CSCfi/docker-keystone-swift.git`
 2. Add the arguments `OS_AUTH_URL`, `OS_SWIFT_URL`
 
 ```sh
-   sed -i "l8\
-   ARG OS_AUTH_URL\
-   ARG OS_SWIFT_URL
+sed -i '8i\
+ARG         OS_AUTH_URL\
+ARG         OS_SWIFT_URL' Dockerfile
 
 ```
 
-3. Change the `OS_SWIFT_URL`: `sed -i "/OS_SWIFT_URL/s/0.0.0.0/swift"`
+3. Change the `OS_SWIFT_URL`: `sed -i '/OS_SWIFT_URL=/s/0.0.0.0/swift/' Dockerfile`
 
 After that, the containers are started with the regular `docker-compose up` commands.
 
