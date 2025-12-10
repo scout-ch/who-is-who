@@ -36,7 +36,7 @@ spec:
             - name: HITOBITO_URL
               value: "https://db.scout.ch"
             - name: ROOT_GROUP
-              value: 2
+              value: "2"
             - name: SWIFT_PROJECT
               value: "PCP-8YSS2UM"
             - name: SWIFT_AUTH_URL
