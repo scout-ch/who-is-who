@@ -4,14 +4,17 @@ The who-is-who backend is responsible for processing the data from the hitobito 
 
 The backend provides a REST Api with the following functions:
 
-- Fetch data from a Hitobito instance
--
+- Fetch and transform data from a Hitobito instance
+- Render and store HTML according to a given configuration
+- Store and route uploaded images
 
 ## Project Setup
 
 ### Install project dependencies
 
-`pip install -r requirements.txt`
+```sh
+pip install -r requirements.txt
+```
 
 ### Development
 
@@ -26,7 +29,7 @@ The following variables need to be set in order for the application to run:
 The `ROOT_GROUP` defines the entrypoint for the data collection.
 It corresponds the the `group_id` in the Hitobito instance of the group for which the who-is-who should be drawn.
 
-## Structure
+## Project Structure
 
 Loading and processing the data of the Hitobito instance follows the steps of an ETL pipeline: `extract.py`, `transform.py`, `load.py`. Extract fetches the data, transform simplifies it and load holds the functions for interfacing with the stored data.
 
