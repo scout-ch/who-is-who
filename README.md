@@ -24,7 +24,8 @@ The docker-compose file creates a local frontend, backend and swift container.
 
 To create a local swift container, an adjusted copy of the [docker-keystone-swift](https://github.com/CSCfi/docker-keystone-swift) repository is needed.
 
-1. `cd ..; git clone git@github.com:CSCfi/docker-keystone-swift.git`
+1. Move to the directory above the git directory for the who-is-who project
+1. `git clone git@github.com:CSCfi/docker-keystone-swift.git`
 2. Add the arguments `OS_AUTH_URL`, `OS_SWIFT_URL`
 
 ```sh
