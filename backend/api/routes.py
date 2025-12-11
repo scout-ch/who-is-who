@@ -64,7 +64,7 @@ def get_static(p):
 def fetch_data():
     try:
         data.fetch_and_store(ROOT_GROUP)
-        return Response(status=200)
+        return ["success"], 200
     except Exception as e:
         return {"error": str(e)}, 500
 
