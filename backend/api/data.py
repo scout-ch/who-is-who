@@ -24,6 +24,10 @@ ID_LABEL = "id"
 
 DEFAULT_IMAGE = "default_image"
 
+ROOT_GROUP = ROOT_GROUP = str(
+    os.environ.get("ROOT_GROUP") if os.environ.get("ROOT_GROUP") else "0"
+)
+
 
 def fetch_and_store(root_group: str):
     groups, roles, people = extract.api_fetch_organisation_data(root_group)
@@ -42,13 +46,11 @@ def fetch_and_store(root_group: str):
     return transformed_data
 
 
-def get(root_group="-1"):
-    if root_group != "-1":
-        g.root_group = root_group
+def get():
     if "data" not in g:
         if not os.path.isfile(DATA_FILE):
             # Not the bestest solution, can be replaced with actual if there's time
-            g.data = fetch_and_store(g.root_group)
+            g.data = fetch_and_store(ROOT_GROUP)
         else:
             g.data = load.read_json(DATA_FILE)
     return g.data

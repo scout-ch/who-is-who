@@ -7,20 +7,16 @@ from flask import Blueprint, Response, jsonify, redirect, request, send_file
 
 from api import configuration, data, load, renderer
 from api.app import APPNAME
+from api.data import ROOT_GROUP
 
 log = logging.getLogger(".".join((APPNAME, "Renderer")))
 
 bp = Blueprint("/", __name__)
 
 
-ROOT_GROUP = str(
-    os.environ.get("ROOT_GROUP") if os.environ.get("ROOT_GROUP") else "0"
-)  # PBS Midata Group ID
-
-
 @bp.route("/", methods=["GET"])
 def index():
-    return jsonify(data.get(ROOT_GROUP))
+    return jsonify(data.get())
 
 
 @bp.route("/full_html/<string:locale>/<int:group_id>", methods=["GET"])
