@@ -26,7 +26,7 @@ To create a local swift container, an adjusted copy of the [docker-keystone-swif
 
 1. Move to the directory containing the who-is-who project
 1. `git clone git@github.com:CSCfi/docker-keystone-swift.git`
-2. Add the arguments `OS_AUTH_URL`, `OS_SWIFT_URL`
+1. Add the arguments `OS_AUTH_URL`, `OS_SWIFT_URL`
 
 ```sh
 sed -i '8i\
@@ -52,6 +52,13 @@ The backend fetches the data used for the generation and generates the static pa
 The server is built with [flask](https://flask.palletsprojects.com/en/stable/) and the generation with [jinja2](https://jinja.palletsprojects.com/en/stable/).
 
 For backend development, go [here](backend/README.md).
+
+### Data
+
+Application data is stored in two json files: `config.json` and `transformed_data.json`.
+Those files contain respectivly the configuration set by users in the frontend and the data extracted and transformed from the hitobito instance.
+
+There is a cronjob defined in `k8s/cronjob.yaml`, which triggers the application to reload the data once nightly.
 
 ## Deployment
 
