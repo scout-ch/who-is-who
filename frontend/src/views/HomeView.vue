@@ -15,8 +15,6 @@ const configStore = useConfigStore()
 
 const loadConfig = axios.get('/api/config')
 const loadData = axios.get('/api')
-console.log(loadConfig)
-console.log(loadData)
 
 const loading = ref(true)
 const loadError = ref(false)

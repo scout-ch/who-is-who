@@ -1,5 +1,9 @@
 # Deployment on kubernetes
 
+## Cronjob
+
+The cronjob defined in `cronjob.yaml` refreshes the backend data (`transformed_data.json`) each night.
+
 ## Ingress
 
 This project uses a traefik ingress configuration. The cluster you deploy to is expected to have a traefik ingress controller up and running. The ingress controller automatically provides HTTPS connections. The controller for this project can be found [here](https://github.com/scout-ch/tractor-k8s-ingress).
@@ -32,5 +36,5 @@ kubectl create secret generic basic-auth --from-file=auth
 After configuring the basic auth, you can deploy to the cluster by running the command
 
 ```sh
-kubectl apply -f secrets.yaml,backend.yaml,frontend.yaml,ingress.yaml
+kubectl apply -f secrets.yaml,backend.yaml,frontend.yaml,ingress.yaml,cronjob.yaml
 ```
