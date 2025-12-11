@@ -19,7 +19,7 @@
     <span class="wiw-person-attrs-container">
         <p class="wiw-person-attrs">
             {% if person.role_emails %}
-                Email: {{ person.role_emails | replace('@', '-at-') }}
+                Email: {{ person.role_emails | replace('@', '(at)') }}
                 <br>
             {% endif %}
             {% if person.role_tel %}Tel.: {{ person.role_tel }}{% endif %}
