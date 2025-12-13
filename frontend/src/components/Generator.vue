@@ -39,8 +39,9 @@ function generateHtml() {
 }
 
 function generate() {
-  configStore.postConfig()
-  setTimeout(generateHtml, 150)
+  configStore.postConfig().then((_) => {
+    generateHtml()
+  })
 }
 
 onMounted(() => {
@@ -53,7 +54,7 @@ onMounted(() => {
     <span class="flex items-center justify-between w-full">
       <a href="#" @click.prevent="generate">
         <span class="flex align-middle justify-center pt-2">
-          <p class="w-full h-full mt-1">Generate preview</p>
+          <p class="w-full h-full mt-1">Generate</p>
           <PlayIcon class="w-7 pt-1 justify-start cursor-pointer" />
         </span>
       </a>

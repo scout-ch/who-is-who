@@ -6,6 +6,7 @@ import ConfigInput from '@/components/widgets/ConfigInput.vue'
 import Groups from '@/components/group/Groups.vue'
 import Generator from '@/components/Generator.vue'
 import Loading from '@/components/widgets/Loader.vue'
+import Configuration from '@/components/Configuration.vue'
 
 import { useDataStore } from '@/stores/dataStore'
 import { useConfigStore } from '@/stores/configStore'
@@ -50,7 +51,10 @@ Promise.all([loadData, loadConfig])
         Loading failed.
       </div>
       <div v-else class="flex justify-center gap-3 w-5/6 m-auto mt-1">
-        <Groups class="w-full min-w-2xl" />
+        <div class="w-full">
+          <Groups class="w-full min-w-2xl" />
+          <Configuration />
+        </div>
         <Generator class="w-full" />
       </div>
     </div>

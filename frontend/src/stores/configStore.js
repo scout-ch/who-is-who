@@ -28,14 +28,38 @@ export const useConfigStore = defineStore('config', {
         }
       })
     },
+    reset() {
+      this.$state.groups = {
+        exclude: [],
+        description: {}, // groups.description[id] = { "de": "lorem ipsum...", "fr": "...", "it": "..." }
+        name: {},
+        order: {},
+      }
+      this.$state.roles = {
+        exclude: [],
+        name: {}, // roles.overwritten[id] = { "de": "Mitglied", "fr": "Mèmbre", "it": "..." }
+        order: {},
+        tel: {},
+        email: {},
+      }
+      this.$state.images = {}
+      this.$state.imagePrefix = ''
+    },
     postConfig() {
-      axios
+      return axios
         .post('/api/config', {
           data: this.$state,
         })
         .catch((err) => {
           console.error('Failed to post config: ', err)
         })
+    },
+    getString() {
+      return btoa(JSON.stringify(this.$state))
+    },
+    fromString(configString) {
+      this.reset()
+      this.initialize(JSON.parse(atob(configString)))
     },
     getField(fieldname) {
       // Get a reference to the field designated by fieldname.

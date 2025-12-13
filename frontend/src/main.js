@@ -6,7 +6,16 @@ import App from './App.vue'
 import router from './router'
 
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
-import { FiDe, FiIt, FiFr, RiArrowGoBackLine, LaUndoAltSolid, BiUpload } from 'oh-vue-icons/icons'
+import {
+  FiDe,
+  FiIt,
+  FiFr,
+  RiArrowGoBackLine,
+  LaUndoAltSolid,
+  BiUpload,
+  BiDownload,
+  LaCopy,
+} from 'oh-vue-icons/icons'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -14,7 +23,7 @@ const pinia = createPinia()
 app.use(router)
 app.use(pinia)
 
-addIcons(FiDe, FiIt, FiFr, RiArrowGoBackLine, LaUndoAltSolid, BiUpload)
+addIcons(FiDe, FiIt, FiFr, RiArrowGoBackLine, LaUndoAltSolid, BiUpload, BiDownload, LaCopy)
 app.component('v-icon', OhVueIcon)
 
 app.mount('#app')
