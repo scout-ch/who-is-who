@@ -8,8 +8,7 @@
   --color-red-font: #8c3c4f;
 }
 
-body {
-  font-family: "Source Sans Pro", sans-serif;
+.wiw-group-data {
   max-width: 1024px;
   margin-left: auto;
   margin-right: auto;

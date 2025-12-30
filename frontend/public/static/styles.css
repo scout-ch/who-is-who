@@ -7,7 +7,6 @@
   --primary-pink: #cdadca;
 }
 
-
 * {
   box-sizing: border-box;
 }
@@ -16,7 +15,7 @@ a {
   text-decoration: none;
 }
 
-body {
+.wiw-group-data {
   font-family: 'Source Sans Pro', sans-serif;
   max-width: 1024px;
   margin-left: auto;
@@ -28,7 +27,12 @@ body {
   margin-right: 3rem;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--primary-violet);
   font-weight: bold;
 }
@@ -48,9 +52,8 @@ h1, h2, h3, h4, h5, h6 {
   display: grid;
   column-gap: 10px;
   row-gap: 10px;
-  grid-template-columns: 50% 50%
+  grid-template-columns: 50% 50%;
 }
-
 
 .card {
   padding: 1rem;
@@ -62,11 +65,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .first-column {
-  grid-column: 1
+  grid-column: 1;
 }
 
 .second-column {
-  grid-column: 2
+  grid-column: 2;
 }
 
 .group-card {
