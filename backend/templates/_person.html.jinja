@@ -17,12 +17,14 @@
         <div class="wiw-person-attrs-col-1">
             <p class="wiw-person-attr">
                 {% if person.role_emails %}Email:{% endif %}
+                <br>
                 {% if person.role_tel %}Tel.:{% endif %}
             </p>
         </div>
         <div class="wiw-person-attrs-col-2">
             <p class="wiw-person-attr">
                 {% if person.role_emails %}{{ person.role_emails | replace('@', '(at)') }}{% endif %}
+                <br>
                 {% if person.role_tel %}{{ person.role_tel }}{% endif %}
             </p>
         </div>

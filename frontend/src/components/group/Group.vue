@@ -130,6 +130,7 @@ function onDrop() {
       <Group :groupId="id" @dragged="onDragged(index)" @dropped="onDropped(index, groupId)" />
     </div>
   </div>
+
   <!-- Group Detail -->
   <div v-else v-show="expanded" class="block p-2 m-1 border rounded-lg">
     <Attributes :groupId="props.groupId" />

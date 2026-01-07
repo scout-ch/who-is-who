@@ -21,6 +21,9 @@ const configStore = useConfigStore()
 
 const configField = configStore.getField(props.configFieldName)
 const initialValues = computed(() => {
+  if (props.id in configField) {
+    return { de: '', fr: '', it: '', ...props.defaultValues, ...configField[props.id] }
+  }
   return { de: '', fr: '', it: '', ...props.defaultValues }
 })
 
