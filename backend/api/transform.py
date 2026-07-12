@@ -4,22 +4,27 @@ import api.extract as extract
 
 
 def t(groups, roles, people):
-    groups_by_id = {str(group["id"]): _transform_group(group) for group in groups}
-    people_by_id = {str(person["id"]): person for person in people}
-    roles_by_id = {
-        role_id: _transform_role(
-            role, people_by_id[str(role["attributes"]["person_id"])]
-        )
-        for role_id, role in roles.items()
-        if str(role["attributes"]["person_id"]) in people_by_id
-    }
-    images = {person["id"]: person["attributes"]["picture"] for person in people}
-    subgroups_for_groups = _subgroups(groups)
-    roles_for_groups = _roles_for_groups(roles, people_by_id)
+    try:
+        groups_by_id = {str(group["id"]): _transform_group(group) for group in groups}
+        people_by_id = {str(person["id"]): person for person in people}
+        roles_by_id = {
+            role_id: _transform_role(
+                role, people_by_id[str(role["attributes"]["person_id"])]
+            )
+            for role_id, role in roles.items()
+            if str(role["attributes"]["person_id"]) in people_by_id
+        }
+        images = {person["id"]: person["attributes"]["picture"] for person in people}
+        subgroups_for_groups = _subgroups(groups)
+        roles_for_groups = _roles_for_groups(roles, people_by_id)
 
-    _clear_empty_groups(groups_by_id, subgroups_for_groups, roles_for_groups)
+        _clear_empty_groups(groups_by_id, subgroups_for_groups, roles_for_groups)
 
-    return groups_by_id, subgroups_for_groups, roles_by_id, roles_for_groups, images
+        return groups_by_id, subgroups_for_groups, roles_by_id, roles_for_groups, images
+
+    except:
+        raise RuntimeError("Could not transform data")
+
 
 
 def _transform_group(group):

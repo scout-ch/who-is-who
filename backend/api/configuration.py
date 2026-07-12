@@ -4,7 +4,7 @@ from flask import g
 
 from api import data, load
 
-CONFIG_FILE = "config.json"
+CONFIG_FILE = '/'.join([data.DATA_FOLDER, "config.json"])
 
 GROUPS_LABEL = "groups"
 ROLES_LABEL = "roles"

@@ -2,10 +2,8 @@ import logging
 import math
 import os
 from copy import deepcopy
-from pickle import TRUE
 
 import requests as re
-from flask import g
 
 from api.app import APPNAME
 
@@ -161,7 +159,10 @@ def api_params(locale="de", include=[], fields={}, filter={}, page=1, pagesize=1
 def _response_ok(response):
     if response.status_code == re.codes.ok:
         return True
-    log.error(f"[{response.status_code}]: {response.url}")
+    status_code = response.status_code
+    log.error(f"[{status_code}]: {response.url}")
+    if status_code == 403 or status_code == 401:
+        raise ConnectionError(f"MiData connection failed: {status_code}")
     return False
 
 

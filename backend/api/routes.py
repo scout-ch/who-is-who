@@ -8,6 +8,7 @@ from flask import Blueprint, Response, jsonify, redirect, request, send_file
 from api import configuration, data, load, renderer
 from api.app import APPNAME
 from api.data import ROOT_GROUP
+from api.health import healthcheck
 
 log = logging.getLogger(".".join((APPNAME, "Renderer")))
 
@@ -18,11 +19,15 @@ bp = Blueprint("/", __name__)
 def index():
     return jsonify(data.get())
 
+@bp.route('/health', methods=["GET"])
+def get_health():
+    return healthcheck()
 
 @bp.route("/full_html/<string:locale>/<int:group_id>", methods=["GET"])
 def get_full_html(locale, group_id):
     try:
         html = load.get_html(group_id, locale)
+
         return "".join((renderer.html_start(), html.decode(), renderer.html_end()))
     except Exception as e:
         return {"error": str(e)}, 404
@@ -62,11 +67,9 @@ def get_static(p):
 
 @bp.route("/fetch-data", methods=["GET"])
 def fetch_data():
-    try:
-        data.fetch_and_store(ROOT_GROUP)
-        return ["success"], 200
-    except Exception as e:
-        return {"error": str(e)}, 500
+    return data.try_load()
+
+
 
 
 @bp.route("/render", methods=["GET"])

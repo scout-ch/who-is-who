@@ -1,12 +1,15 @@
 import os
 from collections import defaultdict
-from logging import error
+import logging
 
 from flask import g
 
 from api import extract, load, transform
 
-DATA_FILE = "transformed_data.json"
+from api.health import write_data_load_timestamp, write_last_login_result, write_data_transformation_result
+
+DATA_FOLDER = "data"
+DATA_FILE = '/'.join([DATA_FOLDER, "transformed_data.json"])
 
 # Use Javascript conventions for JSON tags
 GROUPS_LABEL = "groups"
@@ -42,7 +45,7 @@ def fetch_and_store(root_group: str):
         IMAGE_LABEL: images,
     }
 
-    load.store_to_json(transformed_data)
+    load.store_to_json(transformed_data, DATA_FILE)
     return transformed_data
 
 
@@ -50,10 +53,35 @@ def get():
     if "data" not in g:
         if not os.path.isfile(DATA_FILE):
             # Not the bestest solution, can be replaced with actual if there's time
-            g.data = fetch_and_store(ROOT_GROUP)
+            try_load()
         else:
             g.data = load.read_json(DATA_FILE)
     return g.data
+
+def try_load():
+    try:
+        logging.info("Loading root group")
+        result = fetch_and_store(ROOT_GROUP)
+    except ConnectionError as ce:
+        write_last_login_result("failed")
+        logging.error(str(ce))
+        return ["error"], 500
+    except RuntimeError as re:
+        write_data_transformation_result("failed")
+        logging.error(str(re))
+        return ["error"], 500
+    except Exception as e:
+        logging.error(str(e))
+        return ["error"], 500
+
+
+    write_data_transformation_result("successful")
+    write_last_login_result("successful")
+    write_data_load_timestamp()
+
+    g.data = result
+
+    return ["success"], 200
 
 
 def groups():
