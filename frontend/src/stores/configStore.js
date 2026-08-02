@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { base64ToBytes, bytesToBase64 } from '@/helpers/encoder'
 
 export const useConfigStore = defineStore('config', {
   state: () => ({
@@ -55,11 +56,14 @@ export const useConfigStore = defineStore('config', {
         })
     },
     getString() {
-      return btoa(JSON.stringify(this.$state))
+      const configString = JSON.stringify(this.$state)
+      return bytesToBase64(new TextEncoder().encode(configString))
     },
-    fromString(configString) {
+    fromString(string) {
       this.reset()
-      this.initialize(JSON.parse(atob(configString)))
+
+      const configString = new TextDecoder().decode(base64ToBytes(string))
+      this.initialize(JSON.parse(configString))
     },
     getField(fieldname) {
       // Get a reference to the field designated by fieldname.
