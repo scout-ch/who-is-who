@@ -32,6 +32,9 @@ spec:
           image: ghcr.io/scout-ch/who-is-who-backend:latest
           ports:
             - containerPort: 5000
+          volumeMounts:
+            - mountPath: /app/data
+              name: who-is-who-storage
           env:
             - name: HITOBITO_URL
               value: "https://db.scout.ch"
@@ -60,3 +63,7 @@ spec:
                 secretKeyRef:
                   name: backend-secret
                   key: SWIFT_PASSWORD
+      volumes:
+        - name: who-is-who-storage
+          persistentVolumeClaim:
+            claimName: who-is-who-data
