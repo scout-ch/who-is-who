@@ -24,8 +24,8 @@ For development, it is recommended to use the docker compose setup defined on th
 
 The frontend is dependent on an active backend service.
 While in development, routes to the api are configured in `vite.config.js`.
-When deployed, a nginx configured with `nginx/default.conf` is expected to create a proxy pass to the backend.
-Examples of how the deployment can be handled are found in the `docker-compose.yaml` file or the kubernetes deploy scripts `k8s/frontend.yaml, k8s/ingress.yaml`.
+
+Examples of how the deployment can be handled are found in the `docker-compose.yaml` file.
 
 More configuration is not needed for the frontend.
 
