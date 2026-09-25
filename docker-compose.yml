@@ -9,12 +9,12 @@ services:
     environment:
       HITOBITO_TOKEN: ${HITOBITO_TOKEN}
       HITOBITO_URL: ${HITOBITO_URL}
-      SWIFT_AUTH_URL: ${SWIFT_AUTH_URL:-http://swift:5000/v3} # Needs to use the internal network service name
-      SWIFT_USERNAME: ${SWIFT_USERNAME:-swift}
-      SWIFT_PASSWORD: ${SWIFT_PASSWORD:-veryfast}
-      SWIFT_PROJECT: ${SWIFT_PROJECT:-service}
       SWIFT_CONTAINER: ${SWIFT_CONTAINER:-example-container}
-      SWIFT_REGION: ${SWIFT_REGION:-RegionOne}
+      OS_AUTH_URL: ${OS_AUTH_URL:-http://swift:5000/v3} # Needs to use the internal network service name
+      OS_USERNAME: ${OS_USERNAME:-swift}
+      OS_PASSWORD: ${OS_PASSWORD:-veryfast}
+      OS_PROJECT_NAME: ${OS_PROJECT_NAME:-service}
+      OS_REGION_NAME: ${OS_REGION:-RegionOne}
       ROOT_GROUP: 2
     depends_on:
       swift:
