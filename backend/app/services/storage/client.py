@@ -1,5 +1,4 @@
 import logging
-import os
 
 import openstack
 import requests.exceptions
@@ -12,9 +11,9 @@ from tenacity import (
     wait_exponential,
 )
 
-log = logging.getLogger("Object Storage Client")
+from app.core.config import CONTAINER_NAME
 
-container_name = os.environ["SWIFT_CONTAINER"]
+log = logging.getLogger("Object Storage Client")
 
 
 def get_openstack_connection() -> Connection:
@@ -23,7 +22,7 @@ def get_openstack_connection() -> Connection:
 
 class ObjectStorageService:
     def __init__(self, connection):
-        self._container_name = container_name
+        self._container_name = CONTAINER_NAME
         self._conn: Connection = connection
         self._check_container()
 
@@ -74,7 +73,7 @@ class ObjectStorageService:
         name: str,
     ) -> Object | None:
         objs = list(
-            self._conn.object_store.objects(container=container_name, name=name)
+            self._conn.object_store.objects(container=CONTAINER_NAME, name=name)
         )
         if len(objs) == 0:
             log.warning(f"No such object: ${name}")

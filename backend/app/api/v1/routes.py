@@ -3,6 +3,7 @@ import logging
 from flask import Blueprint, Response, jsonify, request
 
 from app.core.codes import APPNAME, ROOT_GROUP
+from app.core.config import OBJECT_STORAGE_URL
 from app.services.configuration import configuration
 from app.services.data import data
 from app.services.generator import renderer
@@ -51,3 +52,8 @@ def config():
     elif request.method == "GET":
         return jsonify(configuration.get())
     return Response(status=400)
+
+
+@bp.route("/object_storage", methods=["GET"])
+def object_storage():
+    return {"url": OBJECT_STORAGE_URL}, 200
