@@ -12,9 +12,7 @@ from tenacity import (
     wait_exponential,
 )
 
-from api.app import APPNAME
-
-log = logging.getLogger(".".join((APPNAME, "Object Storage Client")))
+log = logging.getLogger("Object Storage Client")
 
 container_name = os.environ["SWIFT_CONTAINER"]
 
@@ -27,6 +25,7 @@ class ObjectStorageService:
     def __init__(self, connection):
         self._container_name = container_name
         self._conn: Connection = connection
+        self._check_container()
 
     def _check_container(self):
         containers = list(

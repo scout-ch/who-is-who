@@ -1,5 +1,6 @@
-from client import ObjectStorageService, get_openstack_connection
 from flask import current_app
+
+from .client import ObjectStorageService, get_openstack_connection
 
 
 def init_storage(app):

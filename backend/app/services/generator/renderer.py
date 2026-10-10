@@ -2,11 +2,9 @@ import itertools
 
 from jinja2 import Environment, FileSystemLoader
 
-from api import configuration, data
-
-TEMPLATE_FOLDER = "templates"
-
-NAME_LABEL = "name"
+from app.core.codes import TEMPLATE_FOLDER
+from app.services.configuration import configuration
+from app.services.data import data
 
 
 def render_group(
@@ -98,15 +96,6 @@ def html_end(js_link="") -> str:
 
     context = {"js_content": js_content, "js_link": js_link}
     return _render_template("html_end.html.jinja", context)
-
-
-def _render_subgroups(locale: str, group_id: str) -> str:
-    return "".join(
-        [
-            render_group(locale, subgroup)
-            for subgroup in configuration.subgroups(group_id)
-        ]
-    )
 
 
 def _render_template(template_name, context) -> str:

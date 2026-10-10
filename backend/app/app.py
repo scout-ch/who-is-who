@@ -4,11 +4,9 @@ import sys
 from flask import Flask
 from flask_cors import CORS
 
-from api.services.storage import init_storage
+from app.services.storage import init_storage
 
 logger = logging.getLogger(__name__)
-
-APPNAME = "WIW_API"
 
 
 def create_app():
@@ -24,7 +22,7 @@ def create_app():
     CORS(app)
     init_storage(app)
 
-    from . import routes
+    from app.api.v1 import routes
 
     app.register_blueprint(routes.bp)
 
