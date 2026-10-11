@@ -27,6 +27,7 @@ NAME_LABEL = "name"
 NICKNAME_LABEL = "nickname"
 ORDER_LABEL = "order"
 PERSON_LABEL = "person"
+PREVIEW_FILE = "/".join([DATA_FOLDER, "preview.json"])
 ROLES_BY_GROUPS_LABEL = "rolesByGroups"
 ROLES_LABEL = "roles"
 ROLES_LABEL = "roles"
