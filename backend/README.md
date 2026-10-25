@@ -24,7 +24,9 @@ For development, it is recommended to use the docker compose setup defined on th
 
 The following variables need to be set in order for the application to run:
 
-`HITOBITO_TOKEN`, `HITOBITO_URL`, `SWIFT_AUTH_URL`, `SWIFT_USERNAME`, `SWIFT_PASSWORD`, `SWIFT_PROJECT`, `SWIFT_CONTAINER`, `SWIFT_REGION`, `ROOT_GROUP`.
+`HITOBITO_TOKEN`, `HITOBITO_URL`.
+
+Additionally, openstack env variables have to be set to enable connection to an object storage.
 
 The `ROOT_GROUP` defines the entrypoint for the data collection.
 It corresponds the the `group_id` in the Hitobito instance of the group for which the who-is-who should be drawn.

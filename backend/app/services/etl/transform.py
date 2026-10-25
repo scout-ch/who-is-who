@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-import api.extract as extract
+from . import extract
 
 
 def t(groups, roles, people):
@@ -24,7 +24,6 @@ def t(groups, roles, people):
 
     except:
         raise RuntimeError("Could not transform data")
-
 
 
 def _transform_group(group):

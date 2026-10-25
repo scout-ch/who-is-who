@@ -2,22 +2,21 @@ import os
 
 from flask import g
 
-from api import data, load
-
-CONFIG_FILE = '/'.join([data.DATA_FOLDER, "config.json"])
-
-GROUPS_LABEL = "groups"
-ROLES_LABEL = "roles"
-EXCLUDE_LABEL = "exclude"
-DESCRIPTION_LABEL = "description"
-NAME_LABEL = "name"
-ORDER_LABEL = "order"
-EMAIL_LABEL = "email"
-TEL_LABEL = "tel"
-IMAGES_LABEL = "images"
-IMAGE_PREFIX_LABEL = "imagePrefix"
-
-DEFAULT_IMAGE_PREFIX = "/api/image/"
+from app.core.codes import (
+    CONFIG_FILE,
+    DEFAULT_IMAGE_PREFIX,
+    DESCRIPTION_LABEL,
+    EMAIL_LABEL,
+    EXCLUDE_LABEL,
+    GROUPS_LABEL,
+    IMAGE_PREFIX_LABEL,
+    IMAGES_LABEL,
+    NAME_LABEL,
+    ORDER_LABEL,
+    ROLES_LABEL,
+    TEL_LABEL,
+)
+from app.services.data import data, file
 
 
 def get():
@@ -41,10 +40,10 @@ def get():
                 IMAGES_LABEL: {},
                 IMAGE_PREFIX_LABEL: DEFAULT_IMAGE_PREFIX,
             }
-            load.store_to_json(config, CONFIG_FILE)
+            file.store(config, CONFIG_FILE)
             g.configuration = config
         else:
-            g.configuration = load.read_json(CONFIG_FILE)
+            g.configuration = file.read(CONFIG_FILE)
     g.configuration = check_and_correct_config(g.configuration)
     return g.configuration
 
@@ -52,7 +51,7 @@ def get():
 def set_config(config):
     config = check_and_correct_config(config)
     g.configuration = config
-    load.store_to_json(config, CONFIG_FILE)
+    file.store(config, CONFIG_FILE)
 
 
 def excluded_groups():

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import { PlayIcon, ArrowDownIcon } from '@heroicons/vue/24/outline'
+import { PlayIcon, CloudArrowUpIcon } from '@heroicons/vue/24/outline'
 
 import Loading from '@/components/widgets/Loader.vue'
 import { useConfigStore } from '@/stores/configStore'
@@ -10,11 +10,15 @@ const configStore = useConfigStore()
 const loading = ref(true)
 const server_ready = ref(false)
 
-const root_group_url = '/api/full_html/de/2'
+const locales = ['de', 'fr', 'it']
+
+const preview_root = '/api/preview/'
+let locale = ref('de')
+let preview = ref(preview_root + locale.value)
 
 function initialPreview() {
   axios
-    .get(root_group_url)
+    .get(preview)
     .then((_res) => {
       loading.value = false
       server_ready.value = true
@@ -44,6 +48,21 @@ function generate() {
   })
 }
 
+function upload() {
+  axios.get('/api/publish').catch(function (err) {
+    console.error('Failed to render:', err)
+  })
+}
+
+function changeLocale(loc) {
+  locale.value = loc
+  refreshPreview()
+}
+
+function refreshPreview() {
+  preview.value = preview_root + locale.value
+}
+
 onMounted(() => {
   initialPreview()
 })
@@ -58,6 +77,19 @@ onMounted(() => {
           <PlayIcon class="w-7 pt-1 justify-start cursor-pointer" />
         </span>
       </a>
+      <span class="flex align-middle" >
+        <div v-for="locale in locales" class="p-1 pt-4">
+          <span class="flex align-middle justify-center  cursor-pointer" @click.prevent="changeLocale(locale)">
+            <v-icon :name="'fi-' + locale" squared="false" />
+          </span>
+        </div>
+      </span>
+      <a href="#" @click.prevent="upload">
+        <span class="flex align-middle justify-center pt-2">
+          <p class="w-full h-full mt-1">Upload</p>
+          <CloudArrowUpIcon class="w-7 pt-1 justify-start cursor-pointer" />
+        </span>
+      </a>
     </span>
     <Loading v-if="loading" class="mt-10" />
     <div v-else>
@@ -65,7 +97,7 @@ onMounted(() => {
         <iframe
           class="w-full max-w-1/1 resize overflow-auto border rounded-lg m-0"
           height="1200"
-          :src="root_group_url"
+          :src="preview"
         />
       </div>
       <div

@@ -4,7 +4,9 @@ version = "0.1.0"
 description = "Who-Is-Who Backend used for loading, transforming and rendering MiData group data"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "tenacity>=9.1.4",
+]
 
 [tool.jinja-lsp]
 templates = "./templates"
