@@ -79,7 +79,7 @@ def _collect_group_data(group_id, render_subgroups=True, render_people=True):
 
 def html_start(stylesheet_link="") -> str:
     stylesheet_content = ""
-    with open("api/static/styles.css") as f:
+    with open("app/static/styles.css") as f:
         stylesheet_content = f.read()
 
     context = {
@@ -91,7 +91,7 @@ def html_start(stylesheet_link="") -> str:
 
 def html_end(js_link="") -> str:
     js_content = ""
-    with open("api/static/script.js") as f:
+    with open("app/static/script.js") as f:
         js_content = f.read()
 
     context = {"js_content": js_content, "js_link": js_link}
