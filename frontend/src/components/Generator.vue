@@ -14,7 +14,7 @@ const locales = ['de', 'fr', 'it']
 
 const preview_root = '/api/preview/'
 let locale = ref('de')
-let preview = ref()
+let preview = ref(preview_root + locale.value)
 
 function initialPreview() {
   axios
