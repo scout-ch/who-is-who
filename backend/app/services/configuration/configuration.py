@@ -92,13 +92,14 @@ def group_description(group_id):
 
 def group_name(group_id=""):
     group_names = get()[GROUPS_LABEL][NAME_LABEL]
-    if group_id == "":
-        return group_names
 
-    if group_id in group_names:
-        return group_names[group_id]
+    if group_id == "":
+        return ""
+
+    defaults = data.groups()[group_id][NAME_LABEL]
+
     # If no configuration exists for the given group, return the default data
-    return data.groups()[group_id][NAME_LABEL]
+    return defaults | group_names[group_id] if group_id in group_names else defaults
 
 
 def subgroups(group_id) -> list:
