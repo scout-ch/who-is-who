@@ -1,0 +1,37 @@
+import os
+
+APPNAME = "WiW_API"
+DATA_FOLDER = "/app/data"
+HEALTH_FOLDER = "data/health"
+CONFIG_FILE = "/".join([DATA_FOLDER, "config.json"])
+DATA_FILE = "/".join([DATA_FOLDER, "transformed_data.json"])
+DATA_LOAD_FILE = "/".join([HEALTH_FOLDER, "dataload"])
+DATA_TRANSFORM_RESULT_FILE = "/".join([HEALTH_FOLDER, "data_transformation_result"])
+DEFAULT_IMAGE = "default_image"
+DEFAULT_IMAGE_PREFIX = "/api/image/"
+DESCRIPTION_LABEL = "description"
+EMAIL_LABEL = "email"
+EXCLUDE_LABEL = "exclude"
+FIRSTNAME_LABEL = "firstname"
+GROUPS_LABEL = "groups"
+GROUPS_LABEL = "groups"
+ID_LABEL = "id"
+IMAGES_LABEL = "images"
+IMAGE_LABEL = "images"
+IMAGE_PREFIX_LABEL = "imagePrefix"
+LASTNAME_LABEL = "lastname"
+LAST_LOGIN_FILE = "/".join([HEALTH_FOLDER, "last_login"])
+NAME_LABEL = "name"
+NAME_LABEL = "name"
+NAME_LABEL = "name"
+NICKNAME_LABEL = "nickname"
+ORDER_LABEL = "order"
+PERSON_LABEL = "person"
+PREVIEW_FILE = "/".join([DATA_FOLDER, "preview.json"])
+ROLES_BY_GROUPS_LABEL = "rolesByGroups"
+ROLES_LABEL = "roles"
+ROLES_LABEL = "roles"
+ROOT_GROUP = str(os.environ.get("ROOT_GROUP") if os.environ.get("ROOT_GROUP") else "0")
+SUBGROUPS_LABEL = "subgroups"
+TEL_LABEL = "tel"
+TEMPLATE_FOLDER = "templates"

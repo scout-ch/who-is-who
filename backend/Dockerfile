@@ -1,4 +1,4 @@
-FROM python:3.13.9 AS develop
+FROM python:3.14.8 AS develop
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ ENV FLASK_RUN_HOST=0.0.0.0
 
 EXPOSE 3000
 
-CMD ["flask", "--app", "api/app", "run", "--debug", "--port", "3000"]
+CMD ["flask", "--app", "app/app", "run", "--debug", "--port", "3000"]
 
 FROM develop AS prod
 WORKDIR /app

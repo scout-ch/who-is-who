@@ -1,14 +1,11 @@
 import logging
 import math
-import os
 from copy import deepcopy
 
 import requests as re
 
-from api.app import APPNAME
-
-TOKEN = os.environ.get("HITOBITO_TOKEN")
-URL = os.environ.get("HITOBITO_URL")
+from app.core.codes import APPNAME
+from app.core.config import TOKEN, URL
 
 LOCALES = ["de", "it", "fr"]
 API_URL = f"{URL}/api" if URL else "/api"
@@ -174,7 +171,7 @@ def _has_data(response):
 
 
 def _get(url, params):
-    logging.info(f"getting {url}, params: {params}")
+    log.info(f"getting {url}, params: {params}")
     response = re.get(url, headers=HEADERS, params=params)
     if not _response_ok(response) or not _has_data(response):
         return []
