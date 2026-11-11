@@ -14,30 +14,30 @@ import { useConfigStore } from '@/stores/configStore'
 const dataStore = useDataStore()
 const configStore = useConfigStore()
 
-const loadConfig = axios.get('/api/config')
-const loadData = axios.get('/api')
-
 const loading = ref(true)
 const loadError = ref(false)
 
-Promise.all([loadData, loadConfig])
-  .then(([resData, resConfig]) => {
-    // Initialize data store
-    const data = resData.data
-    dataStore.initialize(data)
+async function init() {
+  try {
+    const [resData, resConfig] = await Promise.allSettled([
+      axios.get('/api'),
+      axios.get('/api/config'),
+    ])
 
-    // Initialize config store
-    const config = resConfig.data
-    configStore.initialize(config)
+    // Do the risky work before touching any store, or make initialize() atomic
+    dataStore.initialize(resData.data)
+    configStore.initialize(resConfig.data)
 
-    loading.value = false
     loadError.value = false
-  })
-  .catch((err) => {
-    console.error('Error initializing data: ', err)
-    loading.value = false
+  } catch (err) {
+    console.error('Error initializing data:', err)
     loadError.value = true
-  })
+  } finally {
+    loading.value = false
+  }
+}
+
+init()
 </script>
 
 <template>
