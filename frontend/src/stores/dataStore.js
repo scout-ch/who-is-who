@@ -10,6 +10,7 @@ export const useDataStore = defineStore('data', {
   }),
   actions: {
     initialize(data) {
+      console.log(data)
       Object.keys(this.$state).forEach((key) => {
         if (key in data) {
           // deep copy
