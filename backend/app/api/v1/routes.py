@@ -71,7 +71,9 @@ def publish():
     for locale in LOCALES:
         name = f"api/html/{locale}/{ROOT_GROUP}"
         get_storage_service().upload_file(
-            name=name, data=previews[locale].encode("utf-8"), content_type="text/html"
+            name=name,
+            data=previews[locale].encode("utf-8"),
+            content_type="text/html; charset=utf-8",
         )
         log.info(f"Uploaded file '{name}'")
     return Response(status=200)
