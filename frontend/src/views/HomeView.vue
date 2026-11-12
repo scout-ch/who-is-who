@@ -38,25 +38,7 @@ Promise.allSettled([loadData, loadConfig])
 
     loading.value = false
 })
-async function init() {
-  try {
-    const [resData, resConfig] = await Promise.all([
-      axios.get('/api'),
-      axios.get('/api/config'),
-    ])
 
-    // Do the risky work before touching any store, or make initialize() atomic
-
-    loadError.value = false
-  } catch (err) {
-    console.error('Error initializing data:', err)
-    loadError.value = true
-  } finally {
-    loading.value = false
-  }
-}
-
-init()
 </script>
 
 <template>
