@@ -53,12 +53,9 @@ class ObjectStorageService:
             (requests.exceptions.ConnectionError, requests.exceptions.Timeout)
         ),
     )
-    def upload_file(self, name: str, data, content_type) -> Object | None:
+    def upload_file(self, name: str, data, content_type, **headers) -> Object | None:
         return self._conn.object_store.upload_object(
-            container=self._container_name,
-            name=name,
-            data=data,
-            content_type=content_type,
+            container=self._container_name, name=name, data=data, headers=headers
         )
 
     @retry(
