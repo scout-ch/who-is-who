@@ -17,7 +17,6 @@ services:
       OS_USER_DOMAIN_NAME: ${OS_USER_DOMAIN_NAME:-Default}
       OS_PROJECT_DOMAIN_NAME: ${OS_PROJECT_DOMAIN_NAME:-Default}
       OS_IDENTITY_API_VERSION: ${OS_IDENTITY_API_VERSION:-3}
-      OS_REGION_NAME: ${OS_REGION:-RegionOne}
       ROOT_GROUP: 2
     depends_on:
       swift:
