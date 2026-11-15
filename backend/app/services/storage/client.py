@@ -53,9 +53,12 @@ class ObjectStorageService:
             (requests.exceptions.ConnectionError, requests.exceptions.Timeout)
         ),
     )
-    def upload_file(self, name: str, data, content_type, **headers) -> Object | None:
+    def upload_file(self, name: str, data, **headers) -> Object | None:
         return self._conn.object_store.upload_object(
-            container=self._container_name, name=name, data=data, headers=headers
+            container=self._container_name,
+            name=name,
+            data=data,
+            **headers,
         )
 
     @retry(
@@ -76,7 +79,7 @@ class ObjectStorageService:
             log.warning(f"No such object: ${name}")
             return None
         if len(objs) != 1:
-            log.warning(f"multiple image present in object storage for name: ${name}")
+            log.warning(f"multiple objects present in object storage for name: ${name}")
         return objs.pop()
 
     @retry(
