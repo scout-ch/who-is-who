@@ -1,5 +1,4 @@
 import logging
-import math
 from copy import deepcopy
 
 import requests as re
@@ -43,28 +42,38 @@ def api_fetch_organisation_data(org_id):
 
     # 2. fetch all roles in all groups
     group_ids = [group["id"] for group in groups]
-    roles = fetch_roles_in_groups(group_ids)
+    roles = load_roles_in_groups(group_ids)
 
     # 3. fetch all people belonging to any fetched roles
     people_ids = [role["attributes"]["person_id"] for _, role in roles.items()]
+    people = load_people(people_ids=people_ids)
 
     # Ensure the URL string won't be too long and trigger an 414
     # Splits the API call into n = #ids / MAX_ID_FETCH calls.
     # with stepsizes MAX_ID_FETCH.
-    people = []
-    if len(people_ids) > MAX_ID_FETCH:
-        N = len(people_ids)
-        nsteps = math.ceil(N / MAX_ID_FETCH)
-        for i in range(nsteps):
-            people.extend(
-                fetch_people(
-                    people_ids[i * MAX_ID_FETCH : min((i + 1) * MAX_ID_FETCH, N - 1)]
-                )
-            )
-    else:
-        people = fetch_people(people_ids)
 
     return groups, roles, people
+
+
+def load_roles_in_groups(group_ids):
+    log.info(f"Loading {len(group_ids)} groups")
+    roles = {}
+    for ids in idgen(group_ids, 10):
+        roles |= fetch_roles_in_groups(group_ids=ids)
+    return roles
+
+
+def idgen(ids, size):
+    for start in range(0, len(ids), size):
+        yield ids[start : start + size]
+
+
+def load_people(people_ids):
+    log.info(f"Loading {len(people_ids)} people")
+    people = []
+    for ids in idgen(people_ids, 30):
+        people += fetch_people(ids)
+    return people
 
 
 def fetch_children_groups(group_ids, layer_group_id=None):
@@ -102,8 +111,8 @@ def fetch_roles_in_groups(group_ids):
             filter={"group_id": group_ids},
         )
 
-        roles = {role["id"]: role for role in roles}
-        for role_id, role in roles.items():
+        for role in roles:
+            role_id = role["id"]
             if not role_id in result:
                 result[role_id] = deepcopy(role)
                 result[role_id]["attributes"]["name"] = {}
@@ -171,7 +180,7 @@ def _has_data(response):
 
 
 def _get(url, params):
-    log.info(f"getting {url}, params: {params}")
+    log.info(f"Load {url}, params: {params}")
     response = re.get(url, headers=HEADERS, params=params)
     if not _response_ok(response) or not _has_data(response):
         return []
@@ -188,14 +197,14 @@ def _get_all_pages(url, params):
     res = response.json()
     data = list(res["data"])
 
-    while "next" in res["links"] and not res["links"]["self"] == res["links"]["last"]:
-        res = re.get(URL + res["links"]["next"], headers=HEADERS)
+    while "next" in res["links"] and res["links"]["self"] != res["links"]["last"]:
+        response = re.get(URL + res["links"]["next"], headers=HEADERS)
 
         if not _response_ok(response) or not _has_data(response):
+            log.error("Received bad response, aborting")
             return data
 
-        res = res.json()
-
+        res = response.json()
         data.extend(list(res["data"]))
 
     return data
